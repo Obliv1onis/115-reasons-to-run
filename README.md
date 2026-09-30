@@ -16,7 +16,9 @@ Use the fullscreen button in the top right if you want the game to fill the disp
 
 You start with **900 mil** and **one life**. Moving costs **0.08 mil per metre**. A Premier League trophy adds **150 mil**; some trigger a random challenge against one of the original rival clubs, and you receive the trophy only if you win. A Champions League trophy adds **500 mil** and always triggers a challenge. Its rivals include the original clubs except Tottenham, plus Atlético Madrid, Barcelona, Bayern Munich, Inter, Paris Saint-Germain, and Real Madrid. A lawyer costs **100 mil** and adds one life. If the lion catches you while you have an extra life, you spend that life and the lion freezes in place for **1.5 seconds**. The run ends when the lion catches you with one life left or your budget reaches zero. Those endings have different messages.
 
-Each generated map section has an **80% chance of containing one lawyer** and a **5% chance of containing one Champions League trophy**. Premier League trophies are also rare. The HUD tracks the two trophy counts separately for the current run.
+Each generated map section averages **1.5 Premier League trophies**, has an **80% chance of containing one lawyer**, and has a **5% chance of containing one Champions League trophy**. The HUD tracks the two trophy counts separately for the current run.
+
+Every **15 Premier League trophies**, the League starts a **15-second prosecution mode**. The lion runs at **1.7× its usual speed** and reacts more quickly, the City badge changes to its charged version, Champions League trophies stop appearing, Premier League trophies drop to **0.7 per map section** on average, and each section gets **one lawyer**. Normal spawn rates return when the hearing is adjourned. The timer advances only while you are running.
 
 ## Files
 

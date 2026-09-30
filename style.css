@@ -24,5 +24,6 @@
 .stats .lives-stat b{color:#8de8e5}.stats .lives-stat{min-width:52px}
 @media(max-width:650px){.stats .lives-stat{min-width:0}}
 @media(max-width:430px){.brand small{display:none}.stats .lives-stat b{font-size:23px}.stats .lives-stat small{font-size:7px}}
+.prosecution{position:absolute;top:137px;left:32px;display:flex;gap:12px;align-items:center;padding:8px 12px;border:1px solid #ff8375;background:#401d29e8;color:#ffb0a5;border-radius:4px;font:700 10px var(--mono);letter-spacing:1px;box-shadow:0 0 24px #ff837544}.prosecution b{color:#fff;font-size:13px}@media(max-width:650px){.prosecution{top:118px;left:16px;font-size:9px}}@media(max-width:430px){.prosecution{top:139px}}
 #challengeOverlay.ucl-duel .challenge-panel{border-color:#a9ddff99;box-shadow:0 25px 80px #04141680,0 0 36px #a9ddff20}
 #challengeOverlay.ucl-duel .challenge-panel h2{color:#c4e8ff}
