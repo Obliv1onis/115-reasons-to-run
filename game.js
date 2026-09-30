@@ -5,7 +5,7 @@
   const ctx = canvas.getContext('2d');
   const shell = document.querySelector('.game-shell');
   const images = {};
-  ['manchester-city','manchester-city-cheat','pl','epl','ucl','lawyer','arsenal','chelsea','liverpool','tottenham','manchester-united','atletico-madrid','barcelona','bayern-munich','inter','paris-saint-germain','real-madrid'].forEach(name => {
+  ['manchester-city','manchester-city-cheat','pl','uefa','epl','ucl','lawyer','arsenal','chelsea','liverpool','tottenham','manchester-united','atletico-madrid','barcelona','bayern-munich','inter','paris-saint-germain','real-madrid'].forEach(name => {
     const image = new Image(); image.src = `logos/${name}.${name==='lawyer'?'svg':'png'}`; images[name] = image;
   });
   const words = {
@@ -15,14 +15,14 @@
       controls:'← → / A D MOVE · SPACE / ↑ JUMP · P PAUSE', jump:'JUMP ↑', title:'115 REASONS<br><em>TO RUN.</em>',
       intro:'115 charges. Start with 900 mil. Running burns cash. Premier League trophies pay 150 mil; a rare Champions League trophy pays 500 mil if you win its club challenge. A lawyer costs 100 mil and buys an extra life. Every 15 league titles, the League finally opens the file for 15 seconds.',
       start:'START RUNNING →', instructions:'← → / A D to move · SPACE / ↑ to jump<br>On touchscreens, use the buttons below.',
-      fulltime:'THE LEAGUE WOULD LIKE A WORD', caught:'NO COMMENT.', final:'Trophies collected before questioning:', restart:'FILE AN APPEAL ↻', brokeKicker:'BUDGET: ZERO', brokeTitle:'CHEATED.<br>STILL LOST.', brokeFinal:'Even cheating could not save the budget. Trophies collected:', brokeRestart:'FIND NEW INVESTORS ↻', pause:'HEARING ADJOURNED', breather:'CONSULT<br>THE LAWYERS.', resume:'BACK TO RUNNING →',
+      fulltime:'THE LEAGUE WOULD LIKE A WORD', caught:'NO COMMENT.', final:'Trophies collected before questioning:', uefaKicker:'UEFA HAS ARRIVED WITH A CLIPBOARD', uefaCaught:'EUROPE<br>HAS QUESTIONS.', uefaFinal:'European paperwork caught up with you. Trophies collected:', restart:'FILE AN APPEAL ↻', brokeKicker:'BUDGET: ZERO', brokeTitle:'CHEATED.<br>STILL LOST.', brokeFinal:'Even cheating could not save the budget. Trophies collected:', brokeRestart:'FIND NEW INVESTORS ↻', pause:'HEARING ADJOURNED', breather:'CONSULT<br>THE LAWYERS.', resume:'BACK TO RUNNING →',
       rival:'RIVAL OBJECTION', challengeNote:'Even the chase gets an adjournment. Win the challenge to claim this trophy.',
-      collected:'+1 PREMIER LEAGUE TROPHY. +150 MIL.', hired:'LAWYER HIRED: -100 MIL, +1 LIFE.', saved:'LAWYER INTERVENES! LION FROZEN FOR 1.5s.', frozen:'FROZEN', won:'OBJECTION OVERRULED. +1 TROPHY, +150 MIL!', wonUcl:'CHAMPIONS LEAGUE TROPHY WON! +500 MIL!', lost:'The rival takes this one. No appeal button here.', tie:'Another delay. Play again.',
+      collected:'+1 PREMIER LEAGUE TROPHY. +150 MIL.', hired:'LAWYER HIRED: -100 MIL, +1 LIFE.', saved:'LAWYER INTERVENES! PURSUER FROZEN FOR 1.5s.', frozen:'FROZEN', won:'OBJECTION OVERRULED. +1 TROPHY, +150 MIL!', wonUcl:'CHAMPIONS LEAGUE TROPHY WON! +500 MIL!', wonUclUefa:'+500 MIL. UEFA HAS FOUND YOUR ADDRESS AT LAST.', lost:'The rival takes this one. No appeal button here.', tie:'Another delay. Play again.',
       challengeTitle:name=>`${name} WANTS THIS PREMIER LEAGUE TROPHY`, uclChallengeTitle:name=>`${name} WANTS THE CHAMPIONS LEAGUE TROPHY`,
       highCopy:'Your hidden card is 1–9. Will it be higher or lower than the rival’s card? A tie is a redraw.',
       rpsCopy:'Rock beats scissors. Scissors beat paper. Paper beats rock. Beat the rival to win the trophy.',
       higher:'HIGHER', lower:'LOWER', rock:'ROCK', paper:'PAPER', scissors:'SCISSORS', next:'CONTINUE →',
-      startToast:'115 reasons to keep moving.', prosecutionLabel:'PROSECUTION MODE', prosecutionStart:'15 titles? The League has finally found its reading glasses.', prosecutionEnd:'Hearing adjourned. The trophy cabinet remains under observation.', fullscreen:'Fullscreen', exitFullscreen:'Exit fullscreen', fullscreenError:'Fullscreen is unavailable. The game still fills this window.'
+      startToast:'115 reasons to keep moving.', prosecutionLabel:'PROSECUTION MODE', prosecutionStart:'15 titles? The League has finally found its reading glasses.', prosecutionEnd:'Hearing adjourned. The trophy cabinet remains under observation.', uefaStart:'Three European titles? UEFA has suddenly remembered your address.', uefaEnd:'UEFA has stopped to file paperwork. For now.', bailoutButton:'TAKE 900 MIL', bailoutReady:'INVITE A 30s HEARING', bailoutCooling:seconds=>`COUNSEL RETURNS IN ${seconds}s`, bailoutToast:'900 mil secured. The League calls it evidence; your accountant calls it Tuesday.', fullscreen:'Fullscreen', exitFullscreen:'Exit fullscreen', fullscreenError:'Fullscreen is unavailable. The game still fills this window.'
     },
     zh: {
       brand:'115 <strong>先跑再说</strong>', pageTitle:'115：先跑再说',
@@ -30,14 +30,14 @@
       controls:'← → / A D 移动 · 空格 / ↑ 跳跃 · P 暂停', jump:'跳跃 ↑', title:'115。<br><em>先跑再说。</em>',
       intro:'115 项指控，先拿 900 mil 启动资金。跑动花钱；英超奖杯补回 150 mil，稀有的欧冠奖杯赢下俱乐部挑战后可得 500 mil。律师花费 100 mil、增加一条命。每拿 15 座英超冠军，英超总算会翻开案卷调查 15 秒。',
       start:'先跑为敬 →', instructions:'← → / A D 移动 · 空格 / ↑ 跳跃<br>触屏设备可使用下方按钮。',
-      fulltime:'英超请你配合调查', caught:'无可奉告。', final:'被叫去问话前收集的奖杯：', restart:'提起上诉 ↻', brokeKicker:'资金归零', brokeTitle:'作弊了，<br>还是输了。', brokeFinal:'作弊也救不了预算。收集到的奖杯：', brokeRestart:'再找投资人 ↻', pause:'暂时休庭', breather:'先和律师<br>商量一下。', resume:'继续跑路 →',
+      fulltime:'英超请你配合调查', caught:'无可奉告。', final:'被叫去问话前收集的奖杯：', uefaKicker:'欧足联带着卷宗来了', uefaCaught:'欧洲赛场<br>也要问话。', uefaFinal:'欧洲的文件终于追上你了。收集到的奖杯：', restart:'提起上诉 ↻', brokeKicker:'资金归零', brokeTitle:'作弊了，<br>还是输了。', brokeFinal:'作弊也救不了预算。收集到的奖杯：', brokeRestart:'再找投资人 ↻', pause:'暂时休庭', breather:'先和律师<br>商量一下。', resume:'继续跑路 →',
       rival:'对手提出异议', challengeNote:'追逐也得暂时休庭。赢下小游戏，这座奖杯就归你。',
-      collected:'+1 座英超奖杯，资金 +150 mil。', hired:'请到律师：资金 -100 mil，生命 +1。', saved:'律师出手！狮子原地停 1.5 秒。', frozen:'静止中', won:'异议驳回，英超奖杯 +1，资金 +150 mil！', wonUcl:'欧冠奖杯到手！资金 +500 mil！', lost:'这座归对手，这里可没有上诉按钮。', tie:'又要延期了，再来一局。',
+      collected:'+1 座英超奖杯，资金 +150 mil。', hired:'请到律师：资金 -100 mil，生命 +1。', saved:'律师出手！追兵原地停 1.5 秒。', frozen:'静止中', won:'异议驳回，英超奖杯 +1，资金 +150 mil！', wonUcl:'欧冠奖杯到手！资金 +500 mil！', wonUclUefa:'资金 +500 mil。欧足联终于查到你家地址了。', lost:'这座归对手，这里可没有上诉按钮。', tie:'又要延期了，再来一局。',
       challengeTitle:name=>`${name}要抢这座英超奖杯`, uclChallengeTitle:name=>`${name}要抢这座欧冠奖杯`,
       highCopy:'你的暗牌为 1–9。猜它比对手的牌大还是小，相同则重新抽牌。',
       rpsCopy:'石头胜剪刀，剪刀胜布，布胜石头。战胜对手即可赢得奖杯。',
       higher:'大', lower:'小', rock:'石头', paper:'布', scissors:'剪刀', next:'继续 →',
-      startToast:'不停下来的理由，足足有 115 个。', prosecutionLabel:'起诉模式', prosecutionStart:'又攒够 15 座？英超终于想起翻案卷了。', prosecutionEnd:'暂时休庭。奖杯柜继续接受监督。', fullscreen:'全屏', exitFullscreen:'退出全屏', fullscreenError:'当前无法进入全屏，游戏仍会铺满窗口。'
+      startToast:'不停下来的理由，足足有 115 个。', prosecutionLabel:'起诉模式', prosecutionStart:'又攒够 15 座？英超终于想起翻案卷了。', prosecutionEnd:'暂时休庭。奖杯柜继续接受监督。', uefaStart:'欧冠攒够三座？欧足联突然想起你家地址了。', uefaEnd:'欧足联停下来整理案卷。暂时的。', bailoutButton:'领取 900 mil', bailoutReady:'附赠 30 秒调查', bailoutCooling:seconds=>`律师 ${seconds} 秒后回来`, bailoutToast:'900 mil 到账。英超说是证据，会计说是周二。', fullscreen:'全屏', exitFullscreen:'退出全屏', fullscreenError:'当前无法进入全屏，游戏仍会铺满窗口。'
     }
   };
   const eplClubs = [
@@ -60,7 +60,7 @@
   const GRAVITY = 1900, JUMP_SPEED = 950, STEP = 1 / 120, CHUNK = 1800;
   let lang = 'en', state = 'ready', width = 1000, height = 700, scale = 1, viewWidth = 1000;
   let cameraX = 0, groundScreen = 550, baseGround = 550, last = 0, accumulator = 0, time = 0;
-  let player, lion, score = 0, eplScore = 0, uclScore = 0, budget = STARTING_BUDGET, lives = 1, lionFrozen = 0, contactGrace = 0, prosecutionTime = 0, endReason = 'caught', chunks = new Map(), runSeed = 1, visitedChunks = new Set();
+  let player, lion, uefa = null, parkedUefas = [], score = 0, eplScore = 0, uclScore = 0, budget = STARTING_BUDGET, lives = 1, lionFrozen = 0, uefaFrozen = 0, contactGrace = 0, prosecutionTime = 0, uefaTime = 0, bailoutCooldown = 0, endReason = 'caught', chunks = new Map(), runSeed = 1, visitedChunks = new Set();
   let keys = new Set(), touches = new Map(), jumpBuffer = 0, challenge = null, toastTime = 0;
   const t = key => words[lang][key];
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
@@ -152,7 +152,7 @@
   function actor(x,size) {return {x,y:-size,w:size,h:size,vx:0,vy:0,onGround:true,coyote:.1,blocked:false,facing:1};}
   function clearInput(){keys.clear();touches.clear();jumpBuffer=0;}
   function reset() {
-    runSeed=Math.floor(Math.random()*0xffffffff); chunks=new Map(); visitedChunks=new Set([0]); score=0; eplScore=0; uclScore=0; budget=STARTING_BUDGET; lives=1; lionFrozen=0; contactGrace=0; prosecutionTime=0; endReason='caught';
+    runSeed=Math.floor(Math.random()*0xffffffff); chunks=new Map(); visitedChunks=new Set([0]); score=0; eplScore=0; uclScore=0; budget=STARTING_BUDGET; lives=1; lionFrozen=0; uefaFrozen=0; contactGrace=0; prosecutionTime=0; uefaTime=0; bailoutCooldown=0; uefa=null; parkedUefas=[]; endReason='caught';
     player=actor(300,64); lion=actor(15,74); challenge=null; clearInput();
     groundScreen=baseGround;
     cameraX=center(player)-viewWidth*.5; time=0; accumulator=0; terrain(); updateHud();
@@ -197,17 +197,19 @@
     $('meterFill').style.background=gap<70?'#ff8375':'#c8fb51';
     $('prosecution').classList.toggle('hidden',prosecutionTime<=0);
     $('prosecutionTime').textContent=`${prosecutionTime.toFixed(1)}s`;
+    $('bailoutBtn').disabled=state!=='running'||bailoutCooldown>0;
+    $('bailoutStatus').textContent=bailoutCooldown>0?t('bailoutCooling')(Math.ceil(bailoutCooldown)):t('bailoutReady');
   }
   function toast(key,loss=false){$('toast').textContent=t(key);$('toast').classList.remove('hidden');$('toast').classList.toggle('loss',loss);toastTime=2.2;}
   function start(){
     reset();state='running';['startOverlay','gameOverOverlay','challengeOverlay','pauseOverlay'].forEach(id=>$(id).classList.add('hidden'));
-    document.activeElement?.blur();toast('startToast');last=performance.now();
+    document.activeElement?.blur();toast('startToast');last=performance.now();updateHud();
   }
   function renderEndCopy(){
-    const broke=endReason==='funds';
-    $('deathKicker').textContent=t(broke?'brokeKicker':'fulltime');
-    $('deathTitle').innerHTML=t(broke?'brokeTitle':'caught');
-    $('deathDescription').textContent=t(broke?'brokeFinal':'final');
+    const broke=endReason==='funds',caughtByUefa=endReason==='uefa';
+    $('deathKicker').textContent=t(broke?'brokeKicker':caughtByUefa?'uefaKicker':'fulltime');
+    $('deathTitle').innerHTML=t(broke?'brokeTitle':caughtByUefa?'uefaCaught':'caught');
+    $('deathDescription').textContent=t(broke?'brokeFinal':caughtByUefa?'uefaFinal':'final');
     $('restartBtn').textContent=t(broke?'brokeRestart':'restart');
     $('gameOverCrest').src=`logos/${broke?'manchester-city':'manchester-city-cheat'}.png`;
     $('gameOverCrest').alt=broke?'Manchester City out of funds':'Manchester City caught';
@@ -218,17 +220,41 @@
     $('toast').classList.add('hidden');updateHud();
   }
   function refreshUnvisitedChunks(){for(const index of chunks.keys())if(!visitedChunks.has(index))chunks.delete(index);}
+  function startProsecution(seconds,notice){
+    const inactive=prosecutionTime<=0;
+    prosecutionTime=Math.max(prosecutionTime,seconds);
+    lion.thinkTime=0;
+    if(inactive)refreshUnvisitedChunks();
+    toast(notice);
+    updateHud();
+  }
+  function callUefa(){
+    if(uefa)parkedUefas.push(uefa);
+    uefa=actor(cameraX-82,74);
+    uefaTime=15;
+    uefaFrozen=0;
+    startProsecution(15,'uefaStart');
+  }
+  function buyBailout(){
+    if(state!=='running'||bailoutCooldown>0)return;
+    budget+=900;
+    bailoutCooldown=90;
+    startProsecution(30,'bailoutToast');
+  }
   function award(kind='epl'){
     score++;
-    if(kind==='ucl')uclScore++;
+    if(kind==='ucl'){
+      uclScore++;
+      if(uclScore%3===0)callUefa();
+    }
     else{
       eplScore++;
-      if(eplScore%15===0){prosecutionTime=15;lion.thinkTime=0;refreshUnvisitedChunks();toast('prosecutionStart');}
+      if(eplScore%15===0)startProsecution(15,'prosecutionStart');
     }
     budget+=TROPHY_BONUS[kind];updateHud();
   }
-  function pause(){if(state!=='running')return;state='paused';clearInput();$('pauseOverlay').classList.remove('hidden');}
-  function resume(){if(state!=='paused')return;state='running';clearInput();$('pauseOverlay').classList.add('hidden');document.activeElement?.blur();last=performance.now();}
+  function pause(){if(state!=='running')return;state='paused';clearInput();$('pauseOverlay').classList.remove('hidden');updateHud();}
+  function resume(){if(state!=='paused')return;state='running';clearInput();$('pauseOverlay').classList.add('hidden');document.activeElement?.blur();last=performance.now();updateHud();}
   function moveActor(body,targetVx,dt,world,accel,brake){
     const turning=body.vx&&Math.sign(body.vx)!==Math.sign(targetVx);
     body.vx=approach(body.vx,targetVx,(targetVx===0||turning?brake:accel)*dt);
@@ -249,30 +275,32 @@
     }
   }
   function jump(){if(state==='running')jumpBuffer=.14;}
-  function updateLion(dt,world){
-    lion.thinkTime=(lion.thinkTime||0)-dt;
-    lion.jumpCooldown=Math.max(0,(lion.jumpCooldown||0)-dt);
-    if(lion.thinkTime<=0){
-      lion.targetX=center(player);lion.targetFeet=player.y+player.h;
-      lion.thinkTime=prosecutionTime>0?.16+Math.random()*.10:.4+Math.random()*.25;
-      lion.tryClimb=Math.random()<(prosecutionTime>0?.85:.6);
+  function updateChaser(body,dt,world){
+    body.thinkTime=(body.thinkTime||0)-dt;
+    body.jumpCooldown=Math.max(0,(body.jumpCooldown||0)-dt);
+    if(body.thinkTime<=0){
+      body.targetX=center(player);body.targetFeet=player.y+player.h;
+      body.thinkTime=prosecutionTime>0?.16+Math.random()*.10:.4+Math.random()*.25;
+      body.tryClimb=Math.random()<(prosecutionTime>0?.85:.6);
     }
-    const dx=lion.targetX-center(lion),direction=Math.sign(dx);
-    const feet=lion.y+lion.h;
+    const dx=body.targetX-center(body),direction=Math.sign(dx);
+    const feet=body.y+body.h;
     const wallRange=prosecutionTime>0?80:48;
-    const wallAhead=world.obstacles.some(w=>w.y<feet-1&&w.y+w.h>lion.y&&(direction>0?w.x>=lion.x+lion.w-2&&w.x-(lion.x+lion.w)<wallRange:w.x+w.w<=lion.x+2&&lion.x-(w.x+w.w)<wallRange));
+    const wallAhead=world.obstacles.some(w=>w.y<feet-1&&w.y+w.h>body.y&&(direction>0?w.x>=body.x+body.w-2&&w.x-(body.x+body.w)<wallRange:w.x+w.w<=body.x+2&&body.x-(w.x+w.w)<wallRange));
     // Only react to nearby ledges. No route planning or automatic drop-through.
-    const modestClimb=lion.tryClimb&&lion.targetFeet<feet-35&&lion.targetFeet>=feet-195&&Math.abs(dx)<180&&world.platforms.some(p=>p.y<feet-30&&p.y>=feet-195&&p.x<lion.x+lion.w+80&&p.x+p.w>lion.x-80);
-    if(lion.onGround&&lion.jumpCooldown===0&&(wallAhead||lion.blocked||modestClimb)){
-      lion.vy=-JUMP_SPEED*.93;lion.onGround=false;lion.jumpCooldown=prosecutionTime>0?.9:1.35;lion.tryClimb=false;
+    const modestClimb=body.tryClimb&&body.targetFeet<feet-35&&body.targetFeet>=feet-195&&Math.abs(dx)<180&&world.platforms.some(p=>p.y<feet-30&&p.y>=feet-195&&p.x<body.x+body.w+80&&p.x+p.w>body.x-80);
+    if(body.onGround&&body.jumpCooldown===0&&(wallAhead||body.blocked||modestClimb)){
+      body.vy=-JUMP_SPEED*.93;body.onGround=false;body.jumpCooldown=prosecutionTime>0?.9:1.35;body.tryClimb=false;
     }
     const speed=LION_SPEED*(prosecutionTime>0?1.7:1);
-    moveActor(lion,clamp(dx*4,-speed,speed),dt,world,LION_ACCEL*(prosecutionTime>0?1.7:1),LION_BRAKE*(prosecutionTime>0?1.7:1));
+    moveActor(body,clamp(dx*4,-speed,speed),dt,world,LION_ACCEL*(prosecutionTime>0?1.7:1),LION_BRAKE*(prosecutionTime>0?1.7:1));
   }
   function update(dt){
     time+=dt;
     visitedChunks.add(Math.floor(center(player)/CHUNK));
+    bailoutCooldown=Math.max(0,bailoutCooldown-dt);
     if(prosecutionTime>0){prosecutionTime=Math.max(0,prosecutionTime-dt);if(prosecutionTime===0){refreshUnvisitedChunks();toast('prosecutionEnd');}}
+    if(uefaTime>0){uefaTime=Math.max(0,uefaTime-dt);if(uefaTime===0&&uefa){uefa.vx=0;uefa.vy=0;parkedUefas.push(uefa);uefa=null;toast('uefaEnd');}}
     const world=terrain();
     let direction=(keys.has('ArrowRight')||keys.has('KeyD')?1:0)-(keys.has('ArrowLeft')||keys.has('KeyA')?1:0);
     for(const value of touches.values())direction+=value;
@@ -284,16 +312,21 @@
     budget=Math.max(0,budget-Math.abs(player.x-oldX)*RUN_COST_PER_METRE);
     contactGrace=Math.max(0,contactGrace-dt);
     if(lionFrozen>0){lionFrozen=Math.max(0,lionFrozen-dt);lion.vx=0;lion.vy=0;}
-    else updateLion(dt,world);
+    else updateChaser(lion,dt,world);
+    if(uefa){
+      if(uefaFrozen>0){uefaFrozen=Math.max(0,uefaFrozen-dt);uefa.vx=0;uefa.vy=0;}
+      else updateChaser(uefa,dt,world);
+    }
     // World coordinates never scroll themselves; only the view follows the player.
     followCamera(dt);
     for(const lawyer of world.lawyers){
       if(lawyer.taken||!overlap(player,lawyer,6))continue;
       lawyer.taken=true;budget-=100;lives++;toast('hired');
     }
-    if(contactGrace===0&&overlap(player,lion,10)){
-      if(lives>1){lives--;lionFrozen=1.5;contactGrace=2;lion.vx=0;lion.vy=0;toast('saved');}
-      else{gameOver();return;}
+    const captor=contactGrace===0?([lion,uefa].find(body=>body&&overlap(player,body,10))):null;
+    if(captor){
+      if(lives>1){lives--;if(captor===lion)lionFrozen=1.5;else uefaFrozen=1.5;contactGrace=2;captor.vx=0;captor.vy=0;toast('saved');}
+      else{gameOver(captor===uefa?'uefa':'caught');return;}
     }
     for(const trophy of world.trophies){
       if(trophy.taken||(prosecutionTime>0&&trophy.kind==='ucl')||!overlap(player,trophy,3))continue;
@@ -310,13 +343,13 @@
     const clubPool=kind==='ucl'?uclClubs:eplClubs;
     challenge={kind,club:clubPool[Math.floor(Math.random()*clubPool.length)],mode:Math.random()<.5?'high':'rps',card:2+Math.floor(Math.random()*7),result:null,draw:null};
     $('challengeOverlay').classList.toggle('ucl-duel',kind==='ucl');
-    renderChallenge();$('challengeOverlay').classList.remove('hidden');
+    renderChallenge();$('challengeOverlay').classList.remove('hidden');updateHud();
   }
   function renderChallenge(){
     const c=challenge;if(!c)return;
     $('rivalLogo').src=`logos/${c.club.key}.png`;$('rivalLogo').alt=c.club[lang];
     $('challengeTitle').textContent=words[lang][c.kind==='ucl'?'uclChallengeTitle':'challengeTitle'](c.club[lang]);
-    $('challengeCopy').textContent=c.result?t(c.result==='won'&&c.kind==='ucl'?'wonUcl':c.result):t(c.mode==='high'?'highCopy':'rpsCopy');
+    $('challengeCopy').textContent=c.result?t(c.result==='won'&&c.kind==='ucl'?(uclScore%3===0?'wonUclUefa':'wonUcl'):c.result):t(c.mode==='high'?'highCopy':'rpsCopy');
     $('duel').textContent=c.draw || (c.mode==='high'?`?  vs  ${c.card}`:'✊  ✋  ✌');
     const actions=$('challengeActions');actions.replaceChildren();
     const options=c.result&&c.result!=='tie'?['next']:c.mode==='high'?['higher','lower']:['rock','paper','scissors'];
@@ -325,7 +358,7 @@
   function answer(choice){
     if(state!=='challenge'||!challenge)return;const c=challenge;
     if(choice==='next'){
-      challenge=null;state='running';$('challengeOverlay').classList.add('hidden');clearInput();last=performance.now();
+      challenge=null;state='running';$('challengeOverlay').classList.add('hidden');clearInput();last=performance.now();updateHud();
       if(budget<=0)gameOver('funds');
       return;
     }
@@ -400,13 +433,15 @@
       ctx.fillStyle='#f5d57e';ctx.font='700 11px sans-serif';ctx.textAlign='center';ctx.fillText(lang==='en'?'LAWYER':'律师',lawyer.x+lawyer.w/2,lawyer.y-9);
     }
     ctx.textAlign='start';
-    for(const [body,name] of [[lion,'pl'],[player,(prosecutionTime>0||state==='over'&&endReason==='caught')?'manchester-city-cheat':'manchester-city']]){
+    for(const [body,name] of [[lion,'pl'],...parkedUefas.map(body=>[body,'uefa']),...(uefa?[[uefa,'uefa']]:[]),[player,(prosecutionTime>0||state==='over'&&endReason!=='funds')?'manchester-city-cheat':'manchester-city']]){
+      if(body!==player&&!visible(body))continue;
       ctx.fillStyle='#021d2460';ctx.beginPath();ctx.ellipse(center(body),3,body.w*.43,6,0,0,Math.PI*2);ctx.fill();
       const bob=body.onGround&&Math.abs(body.vx)>1?Math.sin(time*18)*1.5:0;
       drawImage(name,body.x,body.y+bob,body.w,body.h);
-      if(body===lion&&lionFrozen>0){
+      const frozen=body===lion?lionFrozen:body===uefa?uefaFrozen:0;
+      if(frozen>0){
         ctx.fillStyle='#e0c4eb';ctx.font='700 14px sans-serif';ctx.textAlign='center';
-        ctx.fillText(`${t('frozen')} ${lionFrozen.toFixed(1)}s`,center(lion),lion.y-16);
+        ctx.fillText(`${t('frozen')} ${frozen.toFixed(1)}s`,center(body),body.y-16);
         ctx.textAlign='start';
       }
       if(name==='pl'){ctx.fillStyle='#dbb8ed';ctx.beginPath();const x=center(body)+body.facing*37;ctx.moveTo(x,body.y+24);ctx.lineTo(x-body.facing*6,body.y+20);ctx.lineTo(x-body.facing*6,body.y+28);ctx.fill();}
@@ -416,6 +451,10 @@
     if(state==='running'&&(lionX<0||lionX>width)){
       const x=clamp(lionX,24,width-58);ctx.fillStyle='#301d40dd';ctx.fillRect(x-8,groundScreen-65,48,48);drawImage('pl',x,groundScreen-60,32,32);
       ctx.fillStyle='#e0c4eb';ctx.font='14px sans-serif';ctx.fillText(lionX<0?'◀':'▶',x+7,groundScreen-18);
+    }
+    if(state==='running'&&uefa){
+      const uefaX=(center(uefa)-cameraX)*scale;
+      if(uefaX<0||uefaX>width){const x=clamp(uefaX,24,width-58);ctx.fillStyle='#203452dd';ctx.fillRect(x-8,groundScreen-122,48,48);drawImage('uefa',x,groundScreen-117,32,32);ctx.fillStyle='#9ddfff';ctx.font='14px sans-serif';ctx.fillText(uefaX<0?'◀':'▶',x+7,groundScreen-76);}
     }
   }
   function frame(now){
@@ -427,6 +466,7 @@
     draw();requestAnimationFrame(frame);
   }
   $('startBtn').addEventListener('click',start);$('restartBtn').addEventListener('click',start);$('resumeBtn').addEventListener('click',resume);
+  $('bailoutBtn').addEventListener('click',buyBailout);
   $('langBtn').addEventListener('click',()=>{setLanguage(lang==='en'?'zh':'en');$('langBtn').blur();});
   window.addEventListener('keydown',event=>{
     const controls=['ArrowLeft','ArrowRight','ArrowUp','Space','KeyA','KeyD','KeyW','KeyP','Escape'];
