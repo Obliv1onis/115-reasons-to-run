@@ -11,7 +11,7 @@
   const words = {
     en: {
       brand:'115 <strong>REASONS TO RUN</strong>', pageTitle:'115 Reasons to Run',
-      tagline:'115 CHARGES. ONE MORE TROPHY?', budget:'BUDGET', lives:'LIVES', trophies:'TROPHIES', best:'BEST HAUL', distance:'LEAGUE ON YOUR TAIL',
+      tagline:'115 CHARGES. ONE MORE TROPHY?', budget:'BUDGET', lives:'LIVES', eplTrophies:'EPL', uclTrophies:'UCL', distance:'LEAGUE ON YOUR TAIL',
       controls:'← → / A D MOVE · SPACE / ↑ JUMP · P PAUSE', jump:'JUMP ↑', title:'115 REASONS<br><em>TO RUN.</em>',
       intro:'115 charges. Start with 900 mil. Running burns cash. Premier League trophies pay 150 mil; a rare Champions League trophy pays 500 mil if you win its club challenge. A lawyer costs 100 mil and buys an extra life.',
       start:'START RUNNING →', instructions:'← → / A D to move · SPACE / ↑ to jump<br>On touchscreens, use the buttons below.',
@@ -26,7 +26,7 @@
     },
     zh: {
       brand:'115 <strong>先跑再说</strong>', pageTitle:'115：先跑再说',
-      tagline:'115 项指控，再拿一座？', budget:'资金', lives:'生命', trophies:'奖杯', best:'最多收获', distance:'英超追到哪了',
+      tagline:'115 项指控，再拿一座？', budget:'资金', lives:'生命', eplTrophies:'英超', uclTrophies:'欧冠', distance:'英超追到哪了',
       controls:'← → / A D 移动 · 空格 / ↑ 跳跃 · P 暂停', jump:'跳跃 ↑', title:'115。<br><em>先跑再说。</em>',
       intro:'115 项指控，先拿 900 mil 启动资金。跑动花钱；英超奖杯补回 150 mil，稀有的欧冠奖杯赢下俱乐部挑战后可得 500 mil。律师花费 100 mil、增加一条命。',
       start:'先跑为敬 →', instructions:'← → / A D 移动 · 空格 / ↑ 跳跃<br>触屏设备可使用下方按钮。',
@@ -59,9 +59,8 @@
   const GRAVITY = 1900, JUMP_SPEED = 950, STEP = 1 / 120, CHUNK = 1800;
   let lang = 'en', state = 'ready', width = 1000, height = 700, scale = 1, viewWidth = 1000;
   let cameraX = 0, groundScreen = 550, baseGround = 550, last = 0, accumulator = 0, time = 0;
-  let player, lion, score = 0, budget = STARTING_BUDGET, lives = 1, lionFrozen = 0, contactGrace = 0, best = 0, endReason = 'caught', chunks = new Map(), runSeed = 1;
+  let player, lion, score = 0, eplScore = 0, uclScore = 0, budget = STARTING_BUDGET, lives = 1, lionFrozen = 0, contactGrace = 0, endReason = 'caught', chunks = new Map(), runSeed = 1;
   let keys = new Set(), touches = new Map(), jumpBuffer = 0, challenge = null, toastTime = 0;
-  try { best = Math.max(0, Number(localStorage.getItem('crown-best')) || 0); } catch (_) { /* Storage is optional. */ }
   const t = key => words[lang][key];
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
   const center = actor => actor.x + actor.w / 2;
@@ -147,7 +146,7 @@
   function actor(x,size) {return {x,y:-size,w:size,h:size,vx:0,vy:0,onGround:true,coyote:.1,blocked:false,facing:1};}
   function clearInput(){keys.clear();touches.clear();jumpBuffer=0;}
   function reset() {
-    runSeed=Math.floor(Math.random()*0xffffffff); chunks=new Map(); score=0; budget=STARTING_BUDGET; lives=1; lionFrozen=0; contactGrace=0; endReason='caught';
+    runSeed=Math.floor(Math.random()*0xffffffff); chunks=new Map(); score=0; eplScore=0; uclScore=0; budget=STARTING_BUDGET; lives=1; lionFrozen=0; contactGrace=0; endReason='caught';
     player=actor(300,64); lion=actor(15,74); challenge=null; clearInput();
     groundScreen=baseGround;
     cameraX=center(player)-viewWidth*.5; time=0; accumulator=0; terrain(); updateHud();
@@ -181,7 +180,7 @@
     updateFullscreenLabel();if(challenge)renderChallenge();if(state==='over')renderEndCopy();updateHud();
   }
   function updateHud(){
-    $('score').textContent=String(score).padStart(2,'0');$('best').textContent=String(best).padStart(2,'0');
+    $('eplScore').textContent=String(eplScore).padStart(2,'0');$('uclScore').textContent=String(uclScore).padStart(2,'0');
     $('lives').textContent=String(lives);
     $('budget').innerHTML=`${Number(Math.max(0,budget).toFixed(1))} <em>mil</em>`;
     $('budget').classList.toggle('low',budget<100);
@@ -210,7 +209,7 @@
     $('gameOverOverlay').classList.toggle('funds-out',reason==='funds');
     $('toast').classList.add('hidden');updateHud();
   }
-  function award(kind='epl'){score++;budget+=TROPHY_BONUS[kind];if(score>best){best=score;try{localStorage.setItem('crown-best',String(best));}catch(_){}}updateHud();}
+  function award(kind='epl'){score++;if(kind==='ucl')uclScore++;else eplScore++;budget+=TROPHY_BONUS[kind];updateHud();}
   function pause(){if(state!=='running')return;state='paused';clearInput();$('pauseOverlay').classList.remove('hidden');}
   function resume(){if(state!=='paused')return;state='running';clearInput();$('pauseOverlay').classList.add('hidden');document.activeElement?.blur();last=performance.now();}
   function moveActor(body,vx,dt,world){
