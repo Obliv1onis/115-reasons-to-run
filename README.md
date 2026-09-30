@@ -1,6 +1,6 @@
 # 115 Reasons to Run
 
-A satirical, unofficial Premier League platformer. Control Manchester City's badge, collect trophies, and stay ahead of the chasing League lion and occasional UEFA pursuit. The satire references the charges and the Premier League's published commission findings; the game's outcomes are fictional.
+An unofficial Premier League platformer game. Control Manchester City's badge, collect trophies, and stay ahead of the chasing League lion and occasional UEFA pursuit. The satire references the charges and the Premier League's published commission findings; the game's outcomes are fictional.
 
 The game runs in a browser with no build step or dependencies. Open [`index.html`](index.html) to play. It starts in English; use the language button to switch to Chinese.
 
