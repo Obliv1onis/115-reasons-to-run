@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#071e22">
+  <title>115 Reasons to Run</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="game-shell">
+    <canvas id="game" aria-label="Manchester City platform game"></canvas>
+    <header class="hud">
+      <div class="brand"><span data-i18n="brand">115 <strong>REASONS TO RUN</strong></span><small data-i18n="tagline">115 CHARGES. ONE MORE TROPHY?</small></div>
+      <div class="stats"><span class="budget-stat"><small data-i18n="budget">BUDGET</small><b id="budget">500 <em>mil</em></b></span><span><small data-i18n="trophies">TROPHIES</small><b id="score">00</b></span><span class="best-stat"><small data-i18n="best">BEST HAUL</small><b id="best">00</b></span></div>
+      <div class="hud-actions"><button id="fullscreenBtn" aria-label="Fullscreen">⛶</button><button id="langBtn">中文</button></div>
+    </header>
+    <div class="pursuit"><span data-i18n="distance">LEAGUE ON YOUR TAIL</span><div class="meter"><i id="meterFill"></i></div><b id="distance">230 m</b></div>
+    <div class="desktop-hint" data-i18n="controls">← → / A D MOVE · SPACE / ↑ JUMP · P PAUSE</div>
+    <div id="toast" class="toast hidden" role="status"></div>
+    <div class="touch-controls"><div><button data-move="-1" aria-label="Move left">←</button><button data-move="1" aria-label="Move right">→</button></div><button id="jumpBtn" data-i18n="jump">JUMP ↑</button></div>
+    <section class="overlay" id="startOverlay">
+      <div class="panel">
+        <img class="crest" src="logos/manchester-city.png" alt="Manchester City">
+        <p class="eyebrow" data-i18n="tagline">115 CHARGES. ONE MORE TROPHY?</p>
+        <h1 data-i18n="title">115 REASONS<br><em>TO RUN.</em></h1>
+        <p class="description" data-i18n="intro">115 charges. Start with 500 mil. Every metre you run burns cash; every trophy brings in 150 mil. Keep the Premier League at a comfortable distance, and watch out for rival clubs.</p>
+        <button class="primary" id="startBtn" data-i18n="start">START RUNNING →</button>
+        <p class="instructions" data-i18n="instructions">← → / A D to move · SPACE / ↑ to jump<br>On touchscreens, use the buttons below.</p>
+      </div>
+    </section>
+    <section class="overlay hidden" id="gameOverOverlay"><div class="panel">
+      <img class="crest caught" id="gameOverCrest" src="logos/manchester-city-cheat.png" alt="Manchester City caught">
+      <p class="eyebrow" id="deathKicker" data-i18n="fulltime">THE LEAGUE WOULD LIKE A WORD</p><h1 id="deathTitle" data-i18n="caught">NO COMMENT.</h1>
+      <p class="description"><span id="deathDescription" data-i18n="final">Trophies collected before questioning:</span> <b id="finalScore">0</b></p>
+      <button class="primary" id="restartBtn" data-i18n="restart">FILE AN APPEAL ↻</button>
+    </div></section>
+    <section class="overlay hidden" id="pauseOverlay"><div class="panel"><p class="eyebrow" data-i18n="pause">HEARING ADJOURNED</p><h1 data-i18n="breather">CONSULT<br>THE LAWYERS.</h1><button class="primary" id="resumeBtn" data-i18n="resume">BACK TO RUNNING →</button></div></section>
+    <section class="overlay hidden" id="challengeOverlay"><div class="panel challenge-panel">
+      <p class="eyebrow" data-i18n="rival">RIVAL OBJECTION</p><img class="crest" id="rivalLogo" alt="Rival club">
+      <h2 id="challengeTitle"></h2><p class="description" id="challengeCopy"></p><div class="duel" id="duel"></div><div id="challengeActions"></div>
+      <p class="instructions" data-i18n="challengeNote">Even the chase gets an adjournment. Win the challenge to claim this trophy.</p>
+    </div></section>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
