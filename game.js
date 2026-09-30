@@ -276,24 +276,32 @@
   }
   function jump(){if(state==='running')jumpBuffer=.14;}
   function updateChaser(body,dt,world){
+    const prosecuting=prosecutionTime>0;
     body.thinkTime=(body.thinkTime||0)-dt;
     body.jumpCooldown=Math.max(0,(body.jumpCooldown||0)-dt);
     if(body.thinkTime<=0){
       body.targetX=center(player);body.targetFeet=player.y+player.h;
-      body.thinkTime=prosecutionTime>0?.16+Math.random()*.10:.4+Math.random()*.25;
-      body.tryClimb=Math.random()<(prosecutionTime>0?.85:.6);
+      body.thinkTime=prosecuting?.16+Math.random()*.10:.4+Math.random()*.25;
+      body.tryClimb=prosecuting||Math.random()<.6;
     }
-    const dx=body.targetX-center(body),direction=Math.sign(dx);
+    const dx=(prosecuting?center(player):body.targetX)-center(body);
+    const verticallySeparated=player.y+player.h<=body.y+10||body.y+body.h<=player.y+10;
+    const closeButOnAnotherLevel=Math.abs(dx)<(player.w+body.w)/2&&verticallySeparated;
+    const direction=prosecuting&&closeButOnAnotherLevel?(Math.sign(player.vx)||body.facing):(Math.sign(dx)||body.facing);
+    const targetFeet=prosecuting?player.y+player.h:body.targetFeet;
     const feet=body.y+body.h;
-    const wallRange=prosecutionTime>0?80:48;
+    const wallRange=prosecuting?110:48;
     const wallAhead=world.obstacles.some(w=>w.y<feet-1&&w.y+w.h>body.y&&(direction>0?w.x>=body.x+body.w-2&&w.x-(body.x+body.w)<wallRange:w.x+w.w<=body.x+2&&body.x-(w.x+w.w)<wallRange));
     // Only react to nearby ledges. No route planning or automatic drop-through.
-    const modestClimb=body.tryClimb&&body.targetFeet<feet-35&&body.targetFeet>=feet-195&&Math.abs(dx)<180&&world.platforms.some(p=>p.y<feet-30&&p.y>=feet-195&&p.x<body.x+body.w+80&&p.x+p.w>body.x-80);
+    const modestClimb=body.tryClimb&&targetFeet<feet-35&&targetFeet>=feet-195&&Math.abs(dx)<(prosecuting?240:180)&&world.platforms.some(p=>p.y<feet-30&&p.y>=feet-195&&p.x<body.x+body.w+80&&p.x+p.w>body.x-80);
     if(body.onGround&&body.jumpCooldown===0&&(wallAhead||body.blocked||modestClimb)){
-      body.vy=-JUMP_SPEED*.93;body.onGround=false;body.jumpCooldown=prosecutionTime>0?.9:1.35;body.tryClimb=false;
+      body.vy=-JUMP_SPEED*.93;body.onGround=false;body.jumpCooldown=prosecuting?.55:1.35;body.tryClimb=false;
     }
-    const speed=LION_SPEED*(prosecutionTime>0?1.7:1);
-    moveActor(body,clamp(dx*4,-speed,speed),dt,world,LION_ACCEL*(prosecutionTime>0?1.7:1),LION_BRAKE*(prosecutionTime>0?1.7:1));
+    const multiplier=prosecuting?1.5:1;
+    const speed=LION_SPEED*multiplier;
+    // During a hearing, keep closing at full speed even inside the old slowdown radius.
+    const targetVx=prosecuting?direction*speed:clamp(dx*4,-speed,speed);
+    moveActor(body,targetVx,dt,world,LION_ACCEL*multiplier,LION_BRAKE*multiplier);
   }
   function update(dt){
     time+=dt;
