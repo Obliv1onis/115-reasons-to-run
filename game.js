@@ -188,7 +188,9 @@
     $('budget').innerHTML=`${Number(Math.max(0,budget).toFixed(1))} <em>mil</em>`;
     $('budget').classList.toggle('low',budget<100);
     if(!player)return;
-    const gap=Math.max(0,Math.abs(center(player)-center(lion))-(player.w+lion.w)/2);
+    const horizontalGap=Math.max(0,Math.abs(center(player)-center(lion))-(player.w+lion.w)/2);
+    const verticalGap=Math.max(0,player.y-(lion.y+lion.h),lion.y-(player.y+player.h));
+    const gap=Math.hypot(horizontalGap,verticalGap);
     $('distance').textContent=`${Math.round(gap)} ${lang==='en'?'m':'米'}`;
     $('meterFill').style.width=`${clamp(gap/320,0,1)*100}%`;
     $('meterFill').style.background=gap<70?'#ff8375':'#c8fb51';
@@ -272,6 +274,21 @@
     }
   }
   function jump(){if(state==='running')jumpBuffer=.14;}
+  function dropRoute(body,targetFeet){
+    if(body.dropRoute){
+      // Stay outside the ledge until the whole badge is below its former platform.
+      if(body.y>body.dropRoute.surfaceY+12)body.dropRoute=null;
+      else return body.dropRoute;
+    }
+    const support=body.support;
+    if(!body.onGround||!support||targetFeet<body.y+body.h+45)return null;
+    const left=support.x-body.w/2-18,right=support.x+support.w+body.w/2+18;
+    const target=center(player),here=center(body);
+    const leftCost=Math.abs(here-left)+.45*Math.abs(target-left);
+    const rightCost=Math.abs(here-right)+.45*Math.abs(target-right);
+    body.dropRoute={surfaceY:support.y,side:leftCost<=rightCost?-1:1};
+    return body.dropRoute;
+  }
   function updateChaser(body,dt,world){
     const prosecuting=prosecutionTime>0;
     body.thinkTime=(body.thinkTime||0)-dt;
@@ -281,23 +298,24 @@
       body.thinkTime=prosecuting?.16+Math.random()*.10:.4+Math.random()*.25;
       body.tryClimb=prosecuting||Math.random()<.6;
     }
+    const targetFeet=prosecuting?player.y+player.h:body.targetFeet;
+    const route=dropRoute(body,player.y+player.h);
     const dx=(prosecuting?center(player):body.targetX)-center(body);
     const verticallySeparated=player.y+player.h<=body.y+10||body.y+body.h<=player.y+10;
     const closeButOnAnotherLevel=Math.abs(dx)<(player.w+body.w)/2&&verticallySeparated;
-    const direction=prosecuting&&closeButOnAnotherLevel?(Math.sign(player.vx)||body.facing):(Math.sign(dx)||body.facing);
-    const targetFeet=prosecuting?player.y+player.h:body.targetFeet;
+    const direction=route?route.side:prosecuting&&closeButOnAnotherLevel?(Math.sign(player.vx)||body.facing):(Math.sign(dx)||body.facing);
     const feet=body.y+body.h;
     const wallRange=prosecuting?110:48;
     const wallAhead=world.obstacles.some(w=>w.y<feet-1&&w.y+w.h>body.y&&(direction>0?w.x>=body.x+body.w-2&&w.x-(body.x+body.w)<wallRange:w.x+w.w<=body.x+2&&body.x-(w.x+w.w)<wallRange));
-    // Only react to nearby ledges. No route planning or automatic drop-through.
+    // Climb only when the target is above; a lower target takes the ledge route.
     const modestClimb=body.tryClimb&&targetFeet<feet-35&&targetFeet>=feet-195&&Math.abs(dx)<(prosecuting?240:180)&&world.platforms.some(p=>p.y<feet-30&&p.y>=feet-195&&p.x<body.x+body.w+80&&p.x+p.w>body.x-80);
-    if(body.onGround&&body.jumpCooldown===0&&(wallAhead||body.blocked||modestClimb)){
+    if(body.onGround&&body.jumpCooldown===0&&(!route||wallAhead)&&(wallAhead||body.blocked||modestClimb)){
       body.vy=-JUMP_SPEED*.93;body.onGround=false;body.jumpCooldown=prosecuting?.55:1.35;body.tryClimb=false;
     }
     const multiplier=prosecuting?1.5:1;
     const speed=LION_SPEED*multiplier;
     // During a hearing, keep closing at full speed even inside the old slowdown radius.
-    const targetVx=prosecuting?direction*speed:clamp(dx*4,-speed,speed);
+    const targetVx=route||prosecuting?direction*speed:clamp(dx*4,-speed,speed);
     moveActor(body,targetVx,dt,world,LION_ACCEL*multiplier,LION_BRAKE*multiplier);
   }
   function update(dt){
