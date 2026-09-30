@@ -5,19 +5,19 @@
   const ctx = canvas.getContext('2d');
   const shell = document.querySelector('.game-shell');
   const images = {};
-  ['manchester-city','manchester-city-cheat','pl','trophy','arsenal','chelsea','liverpool','tottenham','manchester-united'].forEach(name => {
-    const image = new Image(); image.src = `logos/${name==='trophy'?'trophy-transparent':name}.png`; images[name] = image;
+  ['manchester-city','manchester-city-cheat','pl','trophy','lawyer','arsenal','chelsea','liverpool','tottenham','manchester-united'].forEach(name => {
+    const image = new Image(); image.src = `logos/${name==='trophy'?'trophy-transparent':name}.${name==='lawyer'?'svg':'png'}`; images[name] = image;
   });
   const words = {
     en: {
       brand:'115 <strong>REASONS TO RUN</strong>', pageTitle:'115 Reasons to Run',
-      tagline:'115 CHARGES. ONE MORE TROPHY?', budget:'BUDGET', trophies:'TROPHIES', best:'BEST HAUL', distance:'LEAGUE ON YOUR TAIL',
+      tagline:'115 CHARGES. ONE MORE TROPHY?', budget:'BUDGET', lives:'LIVES', trophies:'TROPHIES', best:'BEST HAUL', distance:'LEAGUE ON YOUR TAIL',
       controls:'← → / A D MOVE · SPACE / ↑ JUMP · P PAUSE', jump:'JUMP ↑', title:'115 REASONS<br><em>TO RUN.</em>',
-      intro:'115 charges. Start with 500 mil. Every metre you run burns cash; every trophy brings in 150 mil. Keep the Premier League at a comfortable distance, and watch out for rival clubs.',
+      intro:'115 charges. Start with 500 mil. Running burns cash; trophies bring in 150 mil. A lawyer costs 100 mil and buys an extra life: the Lion freezes for 1.5 seconds when it catches you.',
       start:'START RUNNING →', instructions:'← → / A D to move · SPACE / ↑ to jump<br>On touchscreens, use the buttons below.',
       fulltime:'THE LEAGUE WOULD LIKE A WORD', caught:'NO COMMENT.', final:'Trophies collected before questioning:', restart:'FILE AN APPEAL ↻', brokeKicker:'BUDGET: ZERO', brokeTitle:'CHEATED.<br>STILL LOST.', brokeFinal:'Even cheating could not save the budget. Trophies collected:', brokeRestart:'FIND NEW INVESTORS ↻', pause:'HEARING ADJOURNED', breather:'CONSULT<br>THE LAWYERS.', resume:'BACK TO RUNNING →',
       rival:'RIVAL OBJECTION', challengeNote:'Even the chase gets an adjournment. Win the challenge to claim this trophy.',
-      collected:'+1 TROPHY. +150 MIL.', won:'OBJECTION OVERRULED. +1 TROPHY, +150 MIL!', lost:'The rival takes this one. No appeal button here.', tie:'Another delay. Play again.',
+      collected:'+1 TROPHY. +150 MIL.', hired:'LAWYER HIRED: -100 MIL, +1 LIFE.', saved:'LAWYER INTERVENES! LION FROZEN FOR 1.5s.', frozen:'FROZEN', won:'OBJECTION OVERRULED. +1 TROPHY, +150 MIL!', lost:'The rival takes this one. No appeal button here.', tie:'Another delay. Play again.',
       challengeTitle:name=>`${name} WANTS THIS TROPHY`,
       highCopy:'Your hidden card is 1–9. Will it be higher or lower than the rival’s card? A tie is a redraw.',
       rpsCopy:'Rock beats scissors. Scissors beat paper. Paper beats rock. Beat the rival to win the trophy.',
@@ -26,13 +26,13 @@
     },
     zh: {
       brand:'115 <strong>先跑再说</strong>', pageTitle:'115：先跑再说',
-      tagline:'115 项指控，再拿一座？', budget:'资金', trophies:'奖杯', best:'最多收获', distance:'英超追到哪了',
+      tagline:'115 项指控，再拿一座？', budget:'资金', lives:'生命', trophies:'奖杯', best:'最多收获', distance:'英超追到哪了',
       controls:'← → / A D 移动 · 空格 / ↑ 跳跃 · P 暂停', jump:'跳跃 ↑', title:'115。<br><em>先跑再说。</em>',
-      intro:'115 项指控，先拿 500 mil 启动资金。每跑一米都要花钱，每座奖杯补回 150 mil。甩开英超狮子，也别让其他俱乐部把奖杯抢走。',
+      intro:'115 项指控，先拿 500 mil 启动资金。跑动花钱，奖杯补回 150 mil。律师花费 100 mil、增加一条命；被狮子抓到时，律师能让它原地停 1.5 秒。',
       start:'先跑为敬 →', instructions:'← → / A D 移动 · 空格 / ↑ 跳跃<br>触屏设备可使用下方按钮。',
       fulltime:'英超请你配合调查', caught:'无可奉告。', final:'被叫去问话前收集的奖杯：', restart:'提起上诉 ↻', brokeKicker:'资金归零', brokeTitle:'作弊了，<br>还是输了。', brokeFinal:'作弊也救不了预算。收集到的奖杯：', brokeRestart:'再找投资人 ↻', pause:'暂时休庭', breather:'先和律师<br>商量一下。', resume:'继续跑路 →',
       rival:'对手提出异议', challengeNote:'追逐也得暂时休庭。赢下小游戏，这座奖杯就归你。',
-      collected:'+1 座奖杯，资金 +150 mil。', won:'异议驳回，奖杯 +1，资金 +150 mil！', lost:'这座归对手，这里可没有上诉按钮。', tie:'又要延期了，再来一局。',
+      collected:'+1 座奖杯，资金 +150 mil。', hired:'请到律师：资金 -100 mil，生命 +1。', saved:'律师出手！狮子原地停 1.5 秒。', frozen:'静止中', won:'异议驳回，奖杯 +1，资金 +150 mil！', lost:'这座归对手，这里可没有上诉按钮。', tie:'又要延期了，再来一局。',
       challengeTitle:name=>`${name}要抢这座奖杯`,
       highCopy:'你的暗牌为 1–9。猜它比对手的牌大还是小，相同则重新抽牌。',
       rpsCopy:'石头胜剪刀，剪刀胜布，布胜石头。战胜对手即可赢得奖杯。',
@@ -50,7 +50,7 @@
   const GRAVITY = 1900, JUMP_SPEED = 950, STEP = 1 / 120, CHUNK = 1800;
   let lang = 'en', state = 'ready', width = 1000, height = 700, scale = 1, viewWidth = 1000;
   let cameraX = 0, groundScreen = 550, baseGround = 550, last = 0, accumulator = 0, time = 0;
-  let player, lion, score = 0, budget = STARTING_BUDGET, best = 0, endReason = 'caught', chunks = new Map(), runSeed = 1;
+  let player, lion, score = 0, budget = STARTING_BUDGET, lives = 1, lionFrozen = 0, contactGrace = 0, best = 0, endReason = 'caught', chunks = new Map(), runSeed = 1;
   let keys = new Set(), touches = new Map(), jumpBuffer = 0, challenge = null, toastTime = 0;
   try { best = Math.max(0, Number(localStorage.getItem('crown-best')) || 0); } catch (_) { /* Storage is optional. */ }
   const t = key => words[lang][key];
@@ -61,11 +61,11 @@
     let seed = (Math.imul(index, 2654435761) ^ runSeed) >>> 0;
     return () => { seed = (Math.imul(seed,1664525) + 1013904223) >>> 0; return seed / 4294967296; };
   }
-  // Chunks retain collected trophies, so returning to old terrain never resets rewards.
+  // Chunks retain collected items, so returning to old terrain never resets rewards.
   function makeChunk(index) {
     if (chunks.has(index)) return chunks.get(index);
     const random = randomFor(index), origin = index * CHUNK;
-    const chunk = {obstacles:[], platforms:[], trophies:[]};
+    const chunk = {obstacles:[], platforms:[], trophies:[], lawyers:[]};
     const addTrophy = (x,surface) => chunk.trophies.push({x,y:surface-68,w:44,h:60,taken:false});
     // Each motif has a different silhouette and several reachable routes.
     // Tuple: horizontal position, elevation, width. Adjacent rises stay below 200.
@@ -107,19 +107,30 @@
       if(random()<.035)addTrophy(x,0);
     }
     if(index===0)addTrophy(460,0);
+    // One lawyer with 80% probability: 0.8 lawyers per chunk on average.
+    if(random()<.8){
+      const start=index===0?520:100,range=CHUNK-start-100;
+      const offset=Math.floor(random()*range);
+      for(let step=0;step<range;step+=46){
+        const x=origin+start+(offset+step)%range;
+        const blocked=chunk.obstacles.some(o=>x+64>o.x-30&&x<o.x+o.w+30)
+          ||chunk.trophies.some(item=>item.y>-100&&x+64>item.x-30&&x<item.x+item.w+30);
+        if(!blocked){chunk.lawyers.push({x,y:-86,w:64,h:82,taken:false});break;}
+      }
+    }
     chunks.set(index,chunk); return chunk;
   }
   function terrain() {
     const left=Math.floor((Math.min(player.x,lion.x,cameraX)-CHUNK)/CHUNK);
     const right=Math.floor((Math.max(player.x,lion.x,cameraX+viewWidth)+CHUNK)/CHUNK);
-    const result={obstacles:[],platforms:[],trophies:[]};
+    const result={obstacles:[],platforms:[],trophies:[],lawyers:[]};
     for(let i=left;i<=right;i++) {const c=makeChunk(i); for(const key of Object.keys(result))result[key].push(...c[key]);}
     return result;
   }
   function actor(x,size) {return {x,y:-size,w:size,h:size,vx:0,vy:0,onGround:true,coyote:.1,blocked:false,facing:1};}
   function clearInput(){keys.clear();touches.clear();jumpBuffer=0;}
   function reset() {
-    runSeed=Math.floor(Math.random()*0xffffffff); chunks=new Map(); score=0; budget=STARTING_BUDGET; endReason='caught';
+    runSeed=Math.floor(Math.random()*0xffffffff); chunks=new Map(); score=0; budget=STARTING_BUDGET; lives=1; lionFrozen=0; contactGrace=0; endReason='caught';
     player=actor(300,64); lion=actor(15,74); challenge=null; clearInput();
     groundScreen=baseGround;
     cameraX=center(player)-viewWidth*.5; time=0; accumulator=0; terrain(); updateHud();
@@ -154,6 +165,7 @@
   }
   function updateHud(){
     $('score').textContent=String(score).padStart(2,'0');$('best').textContent=String(best).padStart(2,'0');
+    $('lives').textContent=String(lives);
     $('budget').innerHTML=`${Number(Math.max(0,budget).toFixed(1))} <em>mil</em>`;
     $('budget').classList.toggle('low',budget<100);
     if(!player)return;
@@ -230,10 +242,19 @@
     const oldX=player.x;
     moveActor(player,direction*PLAYER_SPEED,dt,world);
     budget=Math.max(0,budget-Math.abs(player.x-oldX)*RUN_COST_PER_METRE);
-    updateLion(dt,world);
+    contactGrace=Math.max(0,contactGrace-dt);
+    if(lionFrozen>0){lionFrozen=Math.max(0,lionFrozen-dt);lion.vx=0;lion.vy=0;}
+    else updateLion(dt,world);
     // World coordinates never scroll themselves; only the view follows the player.
     followCamera(dt);
-    if(overlap(player,lion,10)){gameOver();return;}
+    for(const lawyer of world.lawyers){
+      if(lawyer.taken||!overlap(player,lawyer,6))continue;
+      lawyer.taken=true;budget-=100;lives++;toast('hired');
+    }
+    if(contactGrace===0&&overlap(player,lion,10)){
+      if(lives>1){lives--;lionFrozen=1.5;contactGrace=2;lion.vx=0;lion.vy=0;toast('saved');}
+      else{gameOver();return;}
+    }
     for(const trophy of world.trophies){
       if(trophy.taken||!overlap(player,trophy,3))continue;
       trophy.taken=true;
@@ -330,10 +351,21 @@
       ctx.fillStyle='#e9ed7924';ctx.beginPath();ctx.ellipse(trophy.x+trophy.w/2,trophy.y+trophy.h/2,32,38,0,0,Math.PI*2);ctx.fill();
       drawImage('trophy',trophy.x,trophy.y+Math.sin(time*3+trophy.x)*2,trophy.w,trophy.h);
     }
+    for(const lawyer of world.lawyers){if(lawyer.taken||!visible(lawyer))continue;
+      ctx.fillStyle='#f5d57e28';ctx.beginPath();ctx.ellipse(lawyer.x+lawyer.w/2,lawyer.y+lawyer.h/2,36,45,0,0,Math.PI*2);ctx.fill();
+      drawImage('lawyer',lawyer.x,lawyer.y+Math.sin(time*2+lawyer.x)*2,lawyer.w,lawyer.h);
+      ctx.fillStyle='#f5d57e';ctx.font='700 11px sans-serif';ctx.textAlign='center';ctx.fillText(lang==='en'?'LAWYER':'律师',lawyer.x+lawyer.w/2,lawyer.y-9);
+    }
+    ctx.textAlign='start';
     for(const [body,name] of [[lion,'pl'],[player,state==='over'&&endReason==='caught'?'manchester-city-cheat':'manchester-city']]){
       ctx.fillStyle='#021d2460';ctx.beginPath();ctx.ellipse(center(body),3,body.w*.43,6,0,0,Math.PI*2);ctx.fill();
       const bob=body.onGround&&Math.abs(body.vx)>1?Math.sin(time*18)*1.5:0;
       drawImage(name,body.x,body.y+bob,body.w,body.h);
+      if(body===lion&&lionFrozen>0){
+        ctx.fillStyle='#e0c4eb';ctx.font='700 14px sans-serif';ctx.textAlign='center';
+        ctx.fillText(`${t('frozen')} ${lionFrozen.toFixed(1)}s`,center(lion),lion.y-16);
+        ctx.textAlign='start';
+      }
       if(name==='pl'){ctx.fillStyle='#dbb8ed';ctx.beginPath();const x=center(body)+body.facing*37;ctx.moveTo(x,body.y+24);ctx.lineTo(x-body.facing*6,body.y+20);ctx.lineTo(x-body.facing*6,body.y+28);ctx.fill();}
     }
     ctx.restore();

@@ -21,3 +21,6 @@
 #gameOverOverlay.funds-out h1{color:#f5d57e}
 #gameOverOverlay.funds-out .caught{filter:grayscale(1) drop-shadow(0 0 22px #f5d57e30)}
 #gameOverOverlay h1{font-size:clamp(46px,6vw,70px);line-height:.95}
+.stats .lives-stat b{color:#8de8e5}.stats .lives-stat{min-width:52px}
+@media(max-width:650px){.stats .lives-stat{min-width:0}}
+@media(max-width:430px){.brand small{display:none}.stats .lives-stat b{font-size:23px}.stats .lives-stat small{font-size:7px}}
