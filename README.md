@@ -14,9 +14,9 @@ The game runs in a browser with no build step or dependencies. Open [`index.html
 
 Use the fullscreen button in the top right if you want the game to fill the display. The camera follows smoothly once you leave the center area. Platforms, barriers, trophies, and lawyers appear as you explore in either direction.
 
-You start with **900 mil** and **one life**. Moving costs **0.08 mil per metre**. A trophy adds **150 mil**; some trophies trigger a random challenge against another club, and you receive the trophy only if you win. A lawyer costs **100 mil** and adds one life. If the lion catches you while you have an extra life, you spend that life and the lion freezes in place for **1.5 seconds**. The run ends when the lion catches you with one life left or your budget reaches zero. Those endings have different messages.
+You start with **900 mil** and **one life**. Moving costs **0.08 mil per metre**. A Premier League trophy adds **150 mil**; some trigger a random challenge against one of the original rival clubs, and you receive the trophy only if you win. A Champions League trophy adds **500 mil** and always triggers a challenge. Its rivals include the original clubs except Tottenham, plus Atlético Madrid, Barcelona, Bayern Munich, Inter, Paris Saint-Germain, and Real Madrid. A lawyer costs **100 mil** and adds one life. If the lion catches you while you have an extra life, you spend that life and the lion freezes in place for **1.5 seconds**. The run ends when the lion catches you with one life left or your budget reaches zero. Those endings have different messages.
 
-Each generated map section has an **80% chance of containing one lawyer**. Trophies are deliberately rare. Your best trophy count is saved in the browser's local storage.
+Each generated map section has an **80% chance of containing one lawyer** and a **5% chance of containing one Champions League trophy**. Premier League trophies are also rare. Your best total trophy count is saved in the browser's local storage.
 
 ## 中文说明
 
@@ -28,9 +28,9 @@ Each generated map section has an **80% chance of containing one lawyer**. Troph
 - **跳跃：** 空格、`↑` 或 `W`；触屏使用跳跃按钮。
 - **暂停 / 继续：** `P` 或 `Esc`。
 
-每局从 **900 mil** 和 **一条命** 开始。移动每米消耗 **0.08 mil**，收集奖杯增加 **150 mil**。部分奖杯会触发与其他俱乐部的随机小游戏，获胜才能拿到奖杯。律师花费 **100 mil**，增加一条命；有额外生命时被狮子碰到，会消耗一条命，并让狮子原地静止 **1.5 秒**。资金耗尽，或只剩一条命时再次被狮子抓到，游戏结束。
+每局从 **900 mil** 和 **一条命** 开始。移动每米消耗 **0.08 mil**。英超奖杯增加 **150 mil**，部分英超奖杯会触发与原有俱乐部的随机小游戏，获胜才能拿到奖杯。欧冠奖杯增加 **500 mil**，每座都会触发争夺；参与争夺的有原有俱乐部（热刺除外），以及马德里竞技、巴塞罗那、拜仁慕尼黑、国际米兰、巴黎圣日耳曼和皇家马德里。律师花费 **100 mil**，增加一条命；有额外生命时被狮子碰到，会消耗一条命，并让狮子原地静止 **1.5 秒**。资金耗尽，或只剩一条命时再次被狮子抓到，游戏结束。
 
-每段随机地图有 **80% 概率出现一名律师**。奖杯较稀有，最佳奖杯数会保存在浏览器本地。
+每段随机地图有 **80% 概率出现一名律师**，以及 **5% 概率出现一座欧冠奖杯**。英超奖杯也较稀有，最佳奖杯总数会保存在浏览器本地。
 
 ## Files
 

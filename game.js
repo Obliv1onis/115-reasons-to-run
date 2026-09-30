@@ -5,20 +5,20 @@
   const ctx = canvas.getContext('2d');
   const shell = document.querySelector('.game-shell');
   const images = {};
-  ['manchester-city','manchester-city-cheat','pl','trophy','lawyer','arsenal','chelsea','liverpool','tottenham','manchester-united'].forEach(name => {
-    const image = new Image(); image.src = `logos/${name==='trophy'?'trophy-transparent':name}.${name==='lawyer'?'svg':'png'}`; images[name] = image;
+  ['manchester-city','manchester-city-cheat','pl','epl','ucl','lawyer','arsenal','chelsea','liverpool','tottenham','manchester-united','atletico-madrid','barcelona','bayern-munich','inter','paris-saint-germain','real-madrid'].forEach(name => {
+    const image = new Image(); image.src = `logos/${name}.${name==='lawyer'?'svg':'png'}`; images[name] = image;
   });
   const words = {
     en: {
       brand:'115 <strong>REASONS TO RUN</strong>', pageTitle:'115 Reasons to Run',
       tagline:'115 CHARGES. ONE MORE TROPHY?', budget:'BUDGET', lives:'LIVES', trophies:'TROPHIES', best:'BEST HAUL', distance:'LEAGUE ON YOUR TAIL',
       controls:'← → / A D MOVE · SPACE / ↑ JUMP · P PAUSE', jump:'JUMP ↑', title:'115 REASONS<br><em>TO RUN.</em>',
-      intro:'115 charges. Start with 900 mil. Running burns cash; trophies bring in 150 mil. A lawyer costs 100 mil and buys an extra life: the Lion freezes for 1.5 seconds when it catches you.',
+      intro:'115 charges. Start with 900 mil. Running burns cash. Premier League trophies pay 150 mil; a rare Champions League trophy pays 500 mil if you win its club challenge. A lawyer costs 100 mil and buys an extra life.',
       start:'START RUNNING →', instructions:'← → / A D to move · SPACE / ↑ to jump<br>On touchscreens, use the buttons below.',
       fulltime:'THE LEAGUE WOULD LIKE A WORD', caught:'NO COMMENT.', final:'Trophies collected before questioning:', restart:'FILE AN APPEAL ↻', brokeKicker:'BUDGET: ZERO', brokeTitle:'CHEATED.<br>STILL LOST.', brokeFinal:'Even cheating could not save the budget. Trophies collected:', brokeRestart:'FIND NEW INVESTORS ↻', pause:'HEARING ADJOURNED', breather:'CONSULT<br>THE LAWYERS.', resume:'BACK TO RUNNING →',
       rival:'RIVAL OBJECTION', challengeNote:'Even the chase gets an adjournment. Win the challenge to claim this trophy.',
-      collected:'+1 TROPHY. +150 MIL.', hired:'LAWYER HIRED: -100 MIL, +1 LIFE.', saved:'LAWYER INTERVENES! LION FROZEN FOR 1.5s.', frozen:'FROZEN', won:'OBJECTION OVERRULED. +1 TROPHY, +150 MIL!', lost:'The rival takes this one. No appeal button here.', tie:'Another delay. Play again.',
-      challengeTitle:name=>`${name} WANTS THIS TROPHY`,
+      collected:'+1 PREMIER LEAGUE TROPHY. +150 MIL.', hired:'LAWYER HIRED: -100 MIL, +1 LIFE.', saved:'LAWYER INTERVENES! LION FROZEN FOR 1.5s.', frozen:'FROZEN', won:'OBJECTION OVERRULED. +1 TROPHY, +150 MIL!', wonUcl:'CHAMPIONS LEAGUE TROPHY WON! +500 MIL!', lost:'The rival takes this one. No appeal button here.', tie:'Another delay. Play again.',
+      challengeTitle:name=>`${name} WANTS THIS PREMIER LEAGUE TROPHY`, uclChallengeTitle:name=>`${name} WANTS THE CHAMPIONS LEAGUE TROPHY`,
       highCopy:'Your hidden card is 1–9. Will it be higher or lower than the rival’s card? A tie is a redraw.',
       rpsCopy:'Rock beats scissors. Scissors beat paper. Paper beats rock. Beat the rival to win the trophy.',
       higher:'HIGHER', lower:'LOWER', rock:'ROCK', paper:'PAPER', scissors:'SCISSORS', next:'CONTINUE →',
@@ -28,25 +28,34 @@
       brand:'115 <strong>先跑再说</strong>', pageTitle:'115：先跑再说',
       tagline:'115 项指控，再拿一座？', budget:'资金', lives:'生命', trophies:'奖杯', best:'最多收获', distance:'英超追到哪了',
       controls:'← → / A D 移动 · 空格 / ↑ 跳跃 · P 暂停', jump:'跳跃 ↑', title:'115。<br><em>先跑再说。</em>',
-      intro:'115 项指控，先拿 900 mil 启动资金。跑动花钱，奖杯补回 150 mil。律师花费 100 mil、增加一条命；被狮子抓到时，律师能让它原地停 1.5 秒。',
+      intro:'115 项指控，先拿 900 mil 启动资金。跑动花钱；英超奖杯补回 150 mil，稀有的欧冠奖杯赢下俱乐部挑战后可得 500 mil。律师花费 100 mil、增加一条命。',
       start:'先跑为敬 →', instructions:'← → / A D 移动 · 空格 / ↑ 跳跃<br>触屏设备可使用下方按钮。',
       fulltime:'英超请你配合调查', caught:'无可奉告。', final:'被叫去问话前收集的奖杯：', restart:'提起上诉 ↻', brokeKicker:'资金归零', brokeTitle:'作弊了，<br>还是输了。', brokeFinal:'作弊也救不了预算。收集到的奖杯：', brokeRestart:'再找投资人 ↻', pause:'暂时休庭', breather:'先和律师<br>商量一下。', resume:'继续跑路 →',
       rival:'对手提出异议', challengeNote:'追逐也得暂时休庭。赢下小游戏，这座奖杯就归你。',
-      collected:'+1 座奖杯，资金 +150 mil。', hired:'请到律师：资金 -100 mil，生命 +1。', saved:'律师出手！狮子原地停 1.5 秒。', frozen:'静止中', won:'异议驳回，奖杯 +1，资金 +150 mil！', lost:'这座归对手，这里可没有上诉按钮。', tie:'又要延期了，再来一局。',
-      challengeTitle:name=>`${name}要抢这座奖杯`,
+      collected:'+1 座英超奖杯，资金 +150 mil。', hired:'请到律师：资金 -100 mil，生命 +1。', saved:'律师出手！狮子原地停 1.5 秒。', frozen:'静止中', won:'异议驳回，英超奖杯 +1，资金 +150 mil！', wonUcl:'欧冠奖杯到手！资金 +500 mil！', lost:'这座归对手，这里可没有上诉按钮。', tie:'又要延期了，再来一局。',
+      challengeTitle:name=>`${name}要抢这座英超奖杯`, uclChallengeTitle:name=>`${name}要抢这座欧冠奖杯`,
       highCopy:'你的暗牌为 1–9。猜它比对手的牌大还是小，相同则重新抽牌。',
       rpsCopy:'石头胜剪刀，剪刀胜布，布胜石头。战胜对手即可赢得奖杯。',
       higher:'大', lower:'小', rock:'石头', paper:'布', scissors:'剪刀', next:'继续 →',
       startToast:'不停下来的理由，足足有 115 个。', fullscreen:'全屏', exitFullscreen:'退出全屏', fullscreenError:'当前无法进入全屏，游戏仍会铺满窗口。'
     }
   };
-  const clubs = [
+  const eplClubs = [
     {key:'arsenal',en:'ARSENAL',zh:'阿森纳'}, {key:'chelsea',en:'CHELSEA',zh:'切尔西'},
     {key:'liverpool',en:'LIVERPOOL',zh:'利物浦'}, {key:'tottenham',en:'TOTTENHAM',zh:'热刺'},
     {key:'manchester-united',en:'MAN UNITED',zh:'曼联'}
   ];
+  const uclClubs = [
+    ...eplClubs.filter(club=>club.key!=='tottenham'),
+    {key:'atletico-madrid',en:'ATLÉTICO MADRID',zh:'马德里竞技'},
+    {key:'barcelona',en:'BARCELONA',zh:'巴塞罗那'},
+    {key:'bayern-munich',en:'BAYERN MUNICH',zh:'拜仁慕尼黑'},
+    {key:'inter',en:'INTER',zh:'国际米兰'},
+    {key:'paris-saint-germain',en:'PARIS SAINT-GERMAIN',zh:'巴黎圣日耳曼'},
+    {key:'real-madrid',en:'REAL MADRID',zh:'皇家马德里'}
+  ];
   const PLAYER_SPEED = 360, LION_SPEED = PLAYER_SPEED * 1.03;
-  const STARTING_BUDGET = 900, RUN_COST_PER_METRE = .08, TROPHY_BONUS = 150;
+  const STARTING_BUDGET = 900, RUN_COST_PER_METRE = .08, TROPHY_BONUS = {epl:150,ucl:500};
   const GRAVITY = 1900, JUMP_SPEED = 950, STEP = 1 / 120, CHUNK = 1800;
   let lang = 'en', state = 'ready', width = 1000, height = 700, scale = 1, viewWidth = 1000;
   let cameraX = 0, groundScreen = 550, baseGround = 550, last = 0, accumulator = 0, time = 0;
@@ -66,7 +75,7 @@
     if (chunks.has(index)) return chunks.get(index);
     const random = randomFor(index), origin = index * CHUNK;
     const chunk = {obstacles:[], platforms:[], trophies:[], lawyers:[]};
-    const addTrophy = (x,surface) => chunk.trophies.push({x,y:surface-68,w:44,h:60,taken:false});
+    const addTrophy = (x,surface) => chunk.trophies.push({kind:'epl',x,y:surface-68,w:44,h:60,taken:false});
     // Each motif has a different silhouette and several reachable routes.
     // Tuple: horizontal position, elevation, width. Adjacent rises stay below 200.
     const layouts = [
@@ -107,6 +116,14 @@
       if(random()<.035)addTrophy(x,0);
     }
     if(index===0)addTrophy(460,0);
+    // At most one Champions League trophy per chunk, at a 5% chance.
+    if(random()<.05){
+      const lowPlatforms=chunk.platforms.filter(platform=>-platform.y<=310);
+      const emptyPlatforms=lowPlatforms.filter(platform=>!chunk.trophies.some(item=>item.y===platform.y-68&&item.x>=platform.x&&item.x<platform.x+platform.w));
+      const choices=emptyPlatforms.length?emptyPlatforms:lowPlatforms;
+      const platform=choices[Math.floor(random()*choices.length)];
+      chunk.trophies.push({kind:'ucl',x:platform.x+platform.w/2-27,y:platform.y-96,w:54,h:88,taken:false});
+    }
     // One lawyer with 80% probability: 0.8 lawyers per chunk on average.
     if(random()<.8){
       const start=index===0?520:100,range=CHUNK-start-100;
@@ -193,7 +210,7 @@
     $('gameOverOverlay').classList.toggle('funds-out',reason==='funds');
     $('toast').classList.add('hidden');updateHud();
   }
-  function award(){score++;budget+=TROPHY_BONUS;if(score>best){best=score;try{localStorage.setItem('crown-best',String(best));}catch(_){}}updateHud();}
+  function award(kind='epl'){score++;budget+=TROPHY_BONUS[kind];if(score>best){best=score;try{localStorage.setItem('crown-best',String(best));}catch(_){}}updateHud();}
   function pause(){if(state!=='running')return;state='paused';clearInput();$('pauseOverlay').classList.remove('hidden');}
   function resume(){if(state!=='paused')return;state='running';clearInput();$('pauseOverlay').classList.add('hidden');document.activeElement?.blur();last=performance.now();}
   function moveActor(body,vx,dt,world){
@@ -258,23 +275,25 @@
     for(const trophy of world.trophies){
       if(trophy.taken||!overlap(player,trophy,3))continue;
       trophy.taken=true;
-      if(Math.random()<.28){startChallenge();break;}
-      award();toast('collected');
+      if(trophy.kind==='ucl'||Math.random()<.28){startChallenge(trophy.kind);break;}
+      award('epl');toast('collected');
     }
     if(state==='challenge'){updateHud();return;}
     if(budget<=0){gameOver('funds');return;}
     updateHud();
   }
-  function startChallenge(){
+  function startChallenge(kind='epl'){
     state='challenge';clearInput();
-    challenge={club:clubs[Math.floor(Math.random()*clubs.length)],mode:Math.random()<.5?'high':'rps',card:2+Math.floor(Math.random()*7),result:null,draw:null};
+    const clubPool=kind==='ucl'?uclClubs:eplClubs;
+    challenge={kind,club:clubPool[Math.floor(Math.random()*clubPool.length)],mode:Math.random()<.5?'high':'rps',card:2+Math.floor(Math.random()*7),result:null,draw:null};
+    $('challengeOverlay').classList.toggle('ucl-duel',kind==='ucl');
     renderChallenge();$('challengeOverlay').classList.remove('hidden');
   }
   function renderChallenge(){
     const c=challenge;if(!c)return;
     $('rivalLogo').src=`logos/${c.club.key}.png`;$('rivalLogo').alt=c.club[lang];
-    $('challengeTitle').textContent=words[lang].challengeTitle(c.club[lang]);
-    $('challengeCopy').textContent=c.result?t(c.result):t(c.mode==='high'?'highCopy':'rpsCopy');
+    $('challengeTitle').textContent=words[lang][c.kind==='ucl'?'uclChallengeTitle':'challengeTitle'](c.club[lang]);
+    $('challengeCopy').textContent=c.result?t(c.result==='won'&&c.kind==='ucl'?'wonUcl':c.result):t(c.mode==='high'?'highCopy':'rpsCopy');
     $('duel').textContent=c.draw || (c.mode==='high'?`?  vs  ${c.card}`:'✊  ✋  ✌');
     const actions=$('challengeActions');actions.replaceChildren();
     const options=c.result&&c.result!=='tie'?['next']:c.mode==='high'?['higher','lower']:['rock','paper','scissors'];
@@ -295,7 +314,7 @@
       const values=['rock','paper','scissors'],emoji=['✊','✋','✌'],ai=Math.floor(Math.random()*3),you=values.indexOf(choice);
       tie=you===ai;win=(you-ai+3)%3===1;c.draw=`${emoji[you]}  vs  ${emoji[ai]}`;
     }
-    c.result=tie?'tie':win?'won':'lost';if(win&&!tie)award();renderChallenge();
+    c.result=tie?'tie':win?'won':'lost';if(win&&!tie)award(c.kind);renderChallenge();
   }
   function drawImage(name,x,y,w,h){
     const image=images[name];if(image.complete&&image.naturalWidth)ctx.drawImage(image,x,y,w,h);
@@ -348,8 +367,9 @@
       ctx.fillStyle='#ffe6a0';ctx.fillRect(o.x,o.y,o.w,3);
     }
     for(const trophy of world.trophies){if(trophy.taken||!visible(trophy))continue;
-      ctx.fillStyle='#e9ed7924';ctx.beginPath();ctx.ellipse(trophy.x+trophy.w/2,trophy.y+trophy.h/2,32,38,0,0,Math.PI*2);ctx.fill();
-      drawImage('trophy',trophy.x,trophy.y+Math.sin(time*3+trophy.x)*2,trophy.w,trophy.h);
+      const ucl=trophy.kind==='ucl';
+      ctx.fillStyle=ucl?'#9ddfff35':'#e9ed7924';ctx.beginPath();ctx.ellipse(trophy.x+trophy.w/2,trophy.y+trophy.h/2,ucl?41:32,ucl?51:38,0,0,Math.PI*2);ctx.fill();
+      drawImage(trophy.kind,trophy.x,trophy.y+Math.sin(time*3+trophy.x)*2,trophy.w,trophy.h);
     }
     for(const lawyer of world.lawyers){if(lawyer.taken||!visible(lawyer))continue;
       ctx.fillStyle='#f5d57e28';ctx.beginPath();ctx.ellipse(lawyer.x+lawyer.w/2,lawyer.y+lawyer.h/2,36,45,0,0,Math.PI*2);ctx.fill();
