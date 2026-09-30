@@ -26,7 +26,7 @@
         <img class="crest" src="logos/manchester-city.png" alt="Manchester City">
         <p class="eyebrow" data-i18n="tagline">115 CHARGES. ONE MORE TROPHY?</p>
         <h1 data-i18n="title">115 REASONS<br><em>TO RUN.</em></h1>
-        <p class="description" data-i18n="intro">115 charges. Start with 900 mil. Running burns cash. Premier League trophies pay 150 mil; a rare Champions League trophy pays 500 mil if you win its club challenge. A lawyer costs 100 mil and buys an extra life. Every 15 league titles, the League finally opens the file for 15 seconds.</p>
+        <p class="description" data-i18n="intro">115 charges. Start with 900 mil. Running burns cash. Premier League trophies pay 150 mil; a rare Champions League trophy pays 500 mil if you answer a rival’s football question. A lawyer costs 100 mil and buys an extra life. Every 15 league titles, the League finally opens the file for 15 seconds.</p>
         <button class="primary" id="startBtn" data-i18n="start">START RUNNING →</button>
         <p class="instructions" data-i18n="instructions">← → / A D to move · SPACE / ↑ to jump<br>On touchscreens, use the buttons below.</p>
       </div>
@@ -40,10 +40,11 @@
     <section class="overlay hidden" id="pauseOverlay"><div class="panel"><p class="eyebrow" data-i18n="pause">HEARING ADJOURNED</p><h1 data-i18n="breather">CONSULT<br>THE LAWYERS.</h1><button class="primary" id="resumeBtn" data-i18n="resume">BACK TO RUNNING →</button></div></section>
     <section class="overlay hidden" id="challengeOverlay"><div class="panel challenge-panel">
       <p class="eyebrow" data-i18n="rival">RIVAL OBJECTION</p><img class="crest" id="rivalLogo" alt="Rival club">
-      <h2 id="challengeTitle"></h2><p class="description" id="challengeCopy"></p><div class="duel" id="duel"></div><div id="challengeActions"></div>
+      <h2 id="challengeTitle"></h2><p class="description" id="challengeCopy"></p><p class="quiz-question" id="quizQuestion"></p><div id="challengeActions"></div><a id="questionSource" class="question-source hidden" target="_blank" rel="noopener noreferrer"></a>
       <p class="instructions" data-i18n="challengeNote">Even the chase gets an adjournment. Win the challenge to claim this trophy.</p>
     </div></section>
   </main>
+  <script src="questions.js"></script>
   <script src="game.js"></script>
 </body>
 </html>
