@@ -174,14 +174,14 @@ window.FOOTBALL_QUESTIONS = (() => {
   clubRecords.forEach(([en,zh,correct,wrong])=>add(epl,en,zh,[correct,...wrong].map(key=>clubs[key]),PL));
 
   // Three questions on the Premier League's 29 September 2026 published findings.
-  add(epl,'Which seasons did the independent Commission examine for the main financial-rule breaches?',
-    '独立委员会审查的主要财务规则违规发生在哪些赛季？',
+  add(epl,"Which seasons did the independent Commission examine for Manchester City's main financial-rule breaches?",
+    '独立委员会审查的曼城的主要财务规则违规发生在哪些赛季？',
     ['2009/10–2017/18','2012/13–2020/21','2015/16–2023/24','2003/04–2011/12'].map(value=>label(value)),RULING);
-  add(epl,'When did the Premier League issue its formal complaint in the 115-charges case?',
-    '英超在“115 项指控”案件中何时正式提出申诉？',
+  add(epl,"When did the Premier League issue its formal complaint in the Manchester City's 115-charges case?,
+    '英超在针对曼城的“115 项指控”案件中何时正式提出申诉？',
     ['February 2023','December 2018','December 2024','September 2026'].map((en,i)=>label(en,['2023 年 2 月','2018 年 12 月','2024 年 12 月','2026 年 9 月'][i])),RULING);
-  add(epl,'After the 29 September 2026 core decision, what still required a separate hearing?',
-    '2026 年 9 月 29 日公布核心裁决后，什么仍须另行听证？',
+  add(epl,'After the 29 September 2026 core decision for the 115-charges case, what still required a separate hearing?',
+    '2026 年 9 月 29 日公布对“115 项指控”案的核心裁决后，什么仍须另行听证？',
     [label('The sanction','处罚决定'),label('Whether a complaint was filed','是否提出过申诉'),label('Which league was involved','涉及哪个联赛'),label('The hearing’s start date','听证会何时开始')],RULING);
 
   // Champions League finals: all questions omit finals featuring Manchester City.
