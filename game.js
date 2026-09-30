@@ -13,7 +13,7 @@
       brand:'115 <strong>REASONS TO RUN</strong>', pageTitle:'115 Reasons to Run',
       tagline:'115 CHARGES. ONE MORE TROPHY?', budget:'BUDGET', lives:'LIVES', trophies:'TROPHIES', best:'BEST HAUL', distance:'LEAGUE ON YOUR TAIL',
       controls:'← → / A D MOVE · SPACE / ↑ JUMP · P PAUSE', jump:'JUMP ↑', title:'115 REASONS<br><em>TO RUN.</em>',
-      intro:'115 charges. Start with 500 mil. Running burns cash; trophies bring in 150 mil. A lawyer costs 100 mil and buys an extra life: the Lion freezes for 1.5 seconds when it catches you.',
+      intro:'115 charges. Start with 900 mil. Running burns cash; trophies bring in 150 mil. A lawyer costs 100 mil and buys an extra life: the Lion freezes for 1.5 seconds when it catches you.',
       start:'START RUNNING →', instructions:'← → / A D to move · SPACE / ↑ to jump<br>On touchscreens, use the buttons below.',
       fulltime:'THE LEAGUE WOULD LIKE A WORD', caught:'NO COMMENT.', final:'Trophies collected before questioning:', restart:'FILE AN APPEAL ↻', brokeKicker:'BUDGET: ZERO', brokeTitle:'CHEATED.<br>STILL LOST.', brokeFinal:'Even cheating could not save the budget. Trophies collected:', brokeRestart:'FIND NEW INVESTORS ↻', pause:'HEARING ADJOURNED', breather:'CONSULT<br>THE LAWYERS.', resume:'BACK TO RUNNING →',
       rival:'RIVAL OBJECTION', challengeNote:'Even the chase gets an adjournment. Win the challenge to claim this trophy.',
@@ -28,7 +28,7 @@
       brand:'115 <strong>先跑再说</strong>', pageTitle:'115：先跑再说',
       tagline:'115 项指控，再拿一座？', budget:'资金', lives:'生命', trophies:'奖杯', best:'最多收获', distance:'英超追到哪了',
       controls:'← → / A D 移动 · 空格 / ↑ 跳跃 · P 暂停', jump:'跳跃 ↑', title:'115。<br><em>先跑再说。</em>',
-      intro:'115 项指控，先拿 500 mil 启动资金。跑动花钱，奖杯补回 150 mil。律师花费 100 mil、增加一条命；被狮子抓到时，律师能让它原地停 1.5 秒。',
+      intro:'115 项指控，先拿 900 mil 启动资金。跑动花钱，奖杯补回 150 mil。律师花费 100 mil、增加一条命；被狮子抓到时，律师能让它原地停 1.5 秒。',
       start:'先跑为敬 →', instructions:'← → / A D 移动 · 空格 / ↑ 跳跃<br>触屏设备可使用下方按钮。',
       fulltime:'英超请你配合调查', caught:'无可奉告。', final:'被叫去问话前收集的奖杯：', restart:'提起上诉 ↻', brokeKicker:'资金归零', brokeTitle:'作弊了，<br>还是输了。', brokeFinal:'作弊也救不了预算。收集到的奖杯：', brokeRestart:'再找投资人 ↻', pause:'暂时休庭', breather:'先和律师<br>商量一下。', resume:'继续跑路 →',
       rival:'对手提出异议', challengeNote:'追逐也得暂时休庭。赢下小游戏，这座奖杯就归你。',
@@ -46,7 +46,7 @@
     {key:'manchester-united',en:'MAN UNITED',zh:'曼联'}
   ];
   const PLAYER_SPEED = 360, LION_SPEED = PLAYER_SPEED * 1.03;
-  const STARTING_BUDGET = 500, RUN_COST_PER_METRE = .08, TROPHY_BONUS = 150;
+  const STARTING_BUDGET = 900, RUN_COST_PER_METRE = .08, TROPHY_BONUS = 150;
   const GRAVITY = 1900, JUMP_SPEED = 950, STEP = 1 / 120, CHUNK = 1800;
   let lang = 'en', state = 'ready', width = 1000, height = 700, scale = 1, viewWidth = 1000;
   let cameraX = 0, groundScreen = 550, baseGround = 550, last = 0, accumulator = 0, time = 0;
