@@ -68,7 +68,8 @@ window.FOOTBALL_QUESTIONS = (() => {
     2010/11:mun 2012/13:mun 2014/15:che 2015/16:lei 2016/17:che 2019/20:liv
     2024/25:liv 2025/26:ars`);
   champions.forEach(([season,club],i)=>add(epl,
-    `Who won the Premier League in ${season}?`,`${season} 赛季的英超冠军是哪支球队？`,pick(championClubs,club,i),TITLES));
+    [`Who won the Premier League in ${season}?`,`Which club finished ${season} as Premier League champion?`,`The ${season} Premier League title went to which club?`][i%3],
+    [`${season} 赛季的英超冠军是哪支球队？`,`哪支球队以英超冠军身份结束了 ${season} 赛季？`,` ${season} 赛季，英超冠军归属哪支球队？`][i%3].trim(),pick(championClubs,club,i),TITLES));
 
   // Single Golden Boot winners. Joint awards and City players are omitted.
   const boots=rows(`1992/93=Teddy_Sheringham,nfo 1993/94=Andrew_Cole,new 1994/95=Alan_Shearer,blb
@@ -84,10 +85,12 @@ window.FOOTBALL_QUESTIONS = (() => {
   const bootFacts=boots.map(([season,pair])=>{const [name,club]=pair.split(',');return {season,name:name.replaceAll('_',' '),club};});
   const bootPeople=only(people,[...new Set(bootFacts.map(fact=>fact.name))]);
   bootFacts.forEach(({season,name},i)=>add(epl,
-    `Who won the Premier League Golden Boot in ${season}?`,`${season} 赛季谁赢得英超金靴？`,
+    [`Who won the Premier League Golden Boot in ${season}?`,`Which player topped the Premier League scoring chart in ${season}?`,`Name the ${season} Premier League Golden Boot winner.`][i%3],
+    [`${season} 赛季谁赢得英超金靴？`,`谁在 ${season} 赛季领跑英超射手榜？`,`请选出 ${season} 赛季的英超金靴得主。`][i%3],
     pick(bootPeople,name,i+4),BOOT));
   bootFacts.filter(fact=>fact.club!=='nfo').forEach(({season,club},i)=>add(epl,
-    `Which club did the ${season} Golden Boot winner represent?`,`${season} 赛季英超金靴得主效力于哪支球队？`,
+    [`Which club did the ${season} Golden Boot winner represent?`,`For which club did the ${season} Premier League top scorer play?`][i%2],
+    [`${season} 赛季英超金靴得主效力于哪支球队？`,` ${season} 赛季英超最佳射手来自哪支球队？`][i%2].trim(),
     pick(englishClubs,club,i+9),BOOT));
 
   // Golden Glove winners, leaving out shared awards and City keepers.
@@ -98,7 +101,8 @@ window.FOOTBALL_QUESTIONS = (() => {
     2025/26=David_Raya`.replaceAll('=',':'));
   const glovePeople=only(people,[...new Set(gloves.map(([,name])=>name.replaceAll('_',' ')))]);
   gloves.forEach(([season,name],i)=>add(epl,
-    `Who won the Premier League Golden Glove in ${season}?`,`${season} 赛季谁获得英超金手套？`,
+    [`Who won the Premier League Golden Glove in ${season}?`,`Which goalkeeper received the ${season} Premier League Golden Glove?`][i%2],
+    [`${season} 赛季谁获得英超金手套？`,`哪位门将获得了 ${season} 赛季英超金手套？`][i%2],
     pick(glovePeople,name.replaceAll('_',' '),i+12),GLOVE));
 
   const goalWinners=rows(`2016/17=Emre_Can 2017/18=Sofiane_Boufal 2018/19=Andros_Townsend
@@ -116,7 +120,8 @@ window.FOOTBALL_QUESTIONS = (() => {
     2024/25=Arne_Slot 2025/26=Mikel_Arteta`.replaceAll('=',':'));
   const managerPeople=only(people,[...new Set(titleManagers.map(([,name])=>name.replaceAll('_',' ')))]);
   titleManagers.forEach(([season,name],i)=>add(epl,
-    `Who managed the Premier League champions in ${season}?`,`${season} 赛季英超冠军的主教练是谁？`,
+    [`Who managed the Premier League champions in ${season}?`,`Which manager guided a club to the ${season} Premier League title?`][i%2],
+    [`${season} 赛季英超冠军的主教练是谁？`,`哪位主教练率队夺得 ${season} 赛季英超冠军？`][i%2],
     pick(managerPeople,name.replaceAll('_',' '),i+21),MANAGERS));
 
   const playerRecords = [
@@ -174,10 +179,10 @@ window.FOOTBALL_QUESTIONS = (() => {
   clubRecords.forEach(([en,zh,correct,wrong])=>add(epl,en,zh,[correct,...wrong].map(key=>clubs[key]),PL));
 
   // Three questions on the Premier League's 29 September 2026 published findings.
-  add(epl,"Which seasons did the independent Commission examine for Manchester City's main financial-rule breaches?",
+  add(epl,'Which seasons did the independent Commission examine for the main financial-rule breaches?',
     '独立委员会审查的曼城的主要财务规则违规发生在哪些赛季？',
     ['2009/10–2017/18','2012/13–2020/21','2015/16–2023/24','2003/04–2011/12'].map(value=>label(value)),RULING);
-  add(epl,"When did the Premier League issue its formal complaint in the Manchester City's 115-charges case?,
+  add(epl,'When did the Premier League issue its formal complaint in the 115-charges case?',
     '英超在针对曼城的“115 项指控”案件中何时正式提出申诉？',
     ['February 2023','December 2018','December 2024','September 2026'].map((en,i)=>label(en,['2023 年 2 月','2018 年 12 月','2024 年 12 月','2026 年 9 月'][i])),RULING);
   add(epl,'After the 29 September 2026 core decision for the 115-charges case, what still required a separate hearing?',
@@ -195,7 +200,8 @@ window.FOOTBALL_QUESTIONS = (() => {
     2022:real,liv 2024:real,dort 2025:psg,inter 2026:psg,ars`);
   finalists.forEach(([year,pair],i)=>{
     const [winner]=pair.split(',');
-    add(ucl,`Who won the ${year} Champions League final?`,`${year} 年欧冠决赛的冠军是哪支球队？`,
+    add(ucl,[`Who won the ${year} Champions League final?`,`Which club lifted the Champions League trophy in ${year}?`,`The ${year} Champions League final ended in a title for which club?`][i%3],
+      [`${year} 年欧冠决赛的冠军是哪支球队？`,`哪支球队在 ${year} 年捧起欧冠奖杯？`,` ${year} 年欧冠冠军最终归属哪支球队？`][i%3].trim(),
       pick(finalistClubs,winner,i+7),FINALS);
   });
   const opponentYears=new Set(['1994','1997','2004','2005','2006','2008','2010','2012','2019','2025']);
@@ -220,6 +226,40 @@ window.FOOTBALL_QUESTIONS = (() => {
   ];
   uclPeople.forEach(([en,zh,correct,wrong,source])=>add(ucl,en,zh,[correct,...wrong].map(name=>people[name]),source));
 
-  if(epl.length!==150||ucl.length!==50)throw Error(`Question bank size: EPL ${epl.length}, UCL ${ucl.length}`);
-  return {epl,ucl};
+  // Keep a small, varied selection from each subject instead of every season
+  // in a historical list. New questions can be added without changing a quota.
+  const select=(bank,limits)=>{
+    const groups=new Map();
+    for(const question of bank){
+      if(!groups.has(question.source))groups.set(question.source,[]);
+      groups.get(question.source).push(question);
+    }
+    return [...groups].flatMap(([source,questions])=>{
+      const count=Math.min(questions.length,limits[source]??questions.length);
+      return Array.from({length:count},(_,i)=>questions[Math.floor((i+.5)*questions.length/count)]);
+    });
+  };
+  const curatedEpl=select(epl,{[TITLES]:4,[BOOT]:7,[GLOVE]:3,[GOAL]:3,[MANAGERS]:4,[PL]:17});
+  const curatedUcl=select(ucl,{[FINALS]:10});
+
+  const PALMER='https://www.premierleague.com/en/news/3969471';
+  const SON='https://www.premierleague.com/en/news/1750634';
+  const LIVERPOOL='https://www.uefa.com/uefachampionsleague/news/0251-0e99aae66a0d-4ef82ebc84f0-1000--liverpool-4-0-barcelona-champions-league-at-a-glance/';
+  const addPeople=(bank,en,zh,correct,wrong,source)=>add(bank,en,zh,[correct,...wrong].map(name=>label(name)),source);
+  addPeople(curatedEpl,'Who scored a left-foot, header and right-foot hat-trick inside 29 minutes against Everton in 2024?',
+    '谁在 2024 年对埃弗顿的比赛中，29 分钟内用左脚、头球和右脚完成帽子戏法？',
+    'Cole Palmer',['Mohamed Salah','Son Heung-min','Harry Kane'],PALMER);
+  addPeople(curatedEpl,'Whose solo run against Burnley won the 2019/20 Premier League Goal of the Season?',
+    '谁在对伯恩利的比赛中长途奔袭，获得 2019/20 赛季英超最佳进球？',
+    'Son Heung-min',['Sadio Mané','Mohamed Salah','Jamie Vardy'],SON);
+  addPeople(curatedUcl,'Who scored twice in three minutes after coming on at half-time in Liverpool’s 2019 comeback against Barcelona?',
+    '2019 年利物浦逆转巴萨时，谁在中场替补登场后于三分钟内梅开二度？',
+    'Georginio Wijnaldum',['Divock Origi','Sadio Mané','Mohamed Salah'],LIVERPOOL);
+  addPeople(curatedUcl,'Who scored Liverpool’s opening goal and the decisive fourth goal against Barcelona in the 2019 semi-final second leg?',
+    '2019 年欧冠半决赛次回合对巴萨，谁打入利物浦的第一球和决定性的第四球？',
+    'Divock Origi',['Georginio Wijnaldum','Roberto Firmino','Sadio Mané'],LIVERPOOL);
+  addPeople(curatedUcl,'Who scored the opening goal of the 2005 Champions League final in the first minute?',
+    '谁在 2005 年欧冠决赛开场第一分钟打入首球？',
+    'Paolo Maldini',['Hernán Crespo','Steven Gerrard','Kaká'],UEFA);
+  return {epl:curatedEpl,ucl:curatedUcl};
 })();

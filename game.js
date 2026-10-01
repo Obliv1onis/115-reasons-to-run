@@ -59,6 +59,27 @@
   let player, lion, uefa = null, parkedUefas = [], score = 0, eplScore = 0, uclScore = 0, budget = STARTING_BUDGET, lives = 1, lionFrozen = 0, uefaFrozen = 0, contactGrace = 0, prosecutionTime = 0, uefaTime = 0, bailoutCooldown = 0, endReason = 'caught', chunks = new Map(), runSeed = 1, visitedChunks = new Set();
   let keys = new Set(), touches = new Map(), jumpBuffer = 0, challenge = null, toastTime = 0;
   let questionDecks = {epl:[],ucl:[]};
+  function shuffledQuestionDeck(bank){
+    const groups=new Map();
+    bank.forEach((question,index)=>{
+      const group=question.source;
+      if(!groups.has(group))groups.set(group,[]);
+      groups.get(group).push(index);
+    });
+    for(const entries of groups.values())for(let i=entries.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));[entries[i],entries[j]]=[entries[j],entries[i]];
+    }
+    const deck=[];let previous=null;
+    while(deck.length<bank.length){
+      const available=[...groups].filter(([source,entries])=>entries.length&&source!==previous);
+      const choices=available.length?available:[...groups].filter(([,entries])=>entries.length);
+      const total=choices.reduce((sum,[,entries])=>sum+entries.length,0);
+      let draw=Math.random()*total,chosen=choices[0];
+      for(const choice of choices){draw-=choice[1].length;if(draw<0){chosen=choice;break;}}
+      deck.push(chosen[1].pop());previous=chosen[0];
+    }
+    return deck.reverse();
+  }
   const t = key => words[lang][key];
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
   const approach = (value,target,step) => value<target?Math.min(target,value+step):Math.max(target,value-step);
@@ -118,8 +139,8 @@
     const eplRate=prosecutionTime>0?.7:1.5;
     const eplCount=Math.floor(eplRate)+(rewardRandom()<eplRate%1?1:0);
     for(const site of sites.slice(0,eplCount))addTrophy(site.x,site.surface);
-    // At most one Champions League trophy per chunk, at a 5% chance outside prosecution.
-    if(prosecutionTime<=0&&rewardRandom()<.05){
+    // At most one Champions League trophy per chunk, at a 15% chance outside prosecution.
+    if(prosecutionTime<=0&&rewardRandom()<.15){
       const lowPlatforms=chunk.platforms.filter(platform=>-platform.y<=310);
       const emptyPlatforms=lowPlatforms.filter(platform=>!chunk.trophies.some(item=>item.y===platform.y-68&&item.x>=platform.x&&item.x<platform.x+platform.w));
       const choices=emptyPlatforms.length?emptyPlatforms:lowPlatforms;
@@ -274,43 +295,45 @@
     }
   }
   function jump(){if(state==='running')jumpBuffer=.14;}
-  function dropRoute(body,targetFeet){
+  function dropRoute(body,targetFeet,world){
     if(body.dropRoute){
       // Stay outside the ledge until the whole badge is below its former platform.
-      if(body.y>body.dropRoute.surfaceY+12)body.dropRoute=null;
+      if(body.y>body.dropRoute.surfaceY+12||targetFeet<body.y+body.h+35)body.dropRoute=null;
       else return body.dropRoute;
     }
     const support=body.support;
     if(!body.onGround||!support||targetFeet<body.y+body.h+45)return null;
     const left=support.x-body.w/2-18,right=support.x+support.w+body.w/2+18;
     const target=center(player),here=center(body);
-    const leftCost=Math.abs(here-left)+.45*Math.abs(target-left);
-    const rightCost=Math.abs(here-right)+.45*Math.abs(target-right);
+    // A ground obstacle beside a ledge can make the nearest exit unreachable.
+    const routeCost=edge=>{
+      const corridorLeft=Math.min(here,edge)-body.w/2;
+      const corridorRight=Math.max(here,edge)+body.w/2;
+      const wallPenalty=world.obstacles.reduce((cost,wall)=>
+        wall.x<corridorRight&&wall.x+wall.w>corridorLeft&&wall.y<support.y+body.h&&wall.y+wall.h>support.y+8
+          ?cost+CHUNK:cost,0);
+      return Math.abs(here-edge)+.45*Math.abs(target-edge)+wallPenalty;
+    };
+    const leftCost=routeCost(left),rightCost=routeCost(right);
     body.dropRoute={surfaceY:support.y,side:leftCost<=rightCost?-1:1};
     return body.dropRoute;
   }
   function updateChaser(body,dt,world){
     const prosecuting=prosecutionTime>0;
-    body.thinkTime=(body.thinkTime||0)-dt;
     body.jumpCooldown=Math.max(0,(body.jumpCooldown||0)-dt);
-    if(body.thinkTime<=0){
-      body.targetX=center(player);body.targetFeet=player.y+player.h;
-      body.thinkTime=prosecuting?.16+Math.random()*.10:.4+Math.random()*.25;
-      body.tryClimb=prosecuting||Math.random()<.6;
-    }
-    const targetFeet=prosecuting?player.y+player.h:body.targetFeet;
-    const route=dropRoute(body,player.y+player.h);
-    const dx=(prosecuting?center(player):body.targetX)-center(body);
+    const targetFeet=player.y+player.h;
+    const route=dropRoute(body,targetFeet,world);
+    const dx=center(player)-center(body);
     const verticallySeparated=player.y+player.h<=body.y+10||body.y+body.h<=player.y+10;
     const closeButOnAnotherLevel=Math.abs(dx)<(player.w+body.w)/2&&verticallySeparated;
-    const direction=route?route.side:prosecuting&&closeButOnAnotherLevel?(Math.sign(player.vx)||body.facing):(Math.sign(dx)||body.facing);
+    const direction=route?route.side:closeButOnAnotherLevel?(Math.sign(player.vx)||Math.sign(dx)||body.facing):(Math.sign(dx)||body.facing);
     const feet=body.y+body.h;
     const wallRange=prosecuting?110:48;
     const wallAhead=world.obstacles.some(w=>w.y<feet-1&&w.y+w.h>body.y&&(direction>0?w.x>=body.x+body.w-2&&w.x-(body.x+body.w)<wallRange:w.x+w.w<=body.x+2&&body.x-(w.x+w.w)<wallRange));
     // Climb only when the target is above; a lower target takes the ledge route.
-    const modestClimb=body.tryClimb&&targetFeet<feet-35&&targetFeet>=feet-195&&Math.abs(dx)<(prosecuting?240:180)&&world.platforms.some(p=>p.y<feet-30&&p.y>=feet-195&&p.x<body.x+body.w+80&&p.x+p.w>body.x-80);
-    if(body.onGround&&body.jumpCooldown===0&&(!route||wallAhead)&&(wallAhead||body.blocked||modestClimb)){
-      body.vy=-JUMP_SPEED*.93;body.onGround=false;body.jumpCooldown=prosecuting?.55:1.35;body.tryClimb=false;
+    const modestClimb=targetFeet<feet-35&&targetFeet>=feet-195&&Math.abs(dx)<(prosecuting?260:210)&&world.platforms.some(p=>p.y<feet-30&&p.y>=feet-195&&p.x<body.x+body.w+100&&p.x+p.w>body.x-100);
+    if(body.onGround&&body.jumpCooldown===0&&(wallAhead||body.blocked||(!route&&modestClimb))){
+      body.vy=-JUMP_SPEED*.93;body.onGround=false;body.jumpCooldown=prosecuting?.45:.75;
     }
     const multiplier=prosecuting?1.5:1;
     const speed=LION_SPEED*multiplier;
@@ -366,8 +389,7 @@
     const clubPool=kind==='ucl'?uclClubs:eplClubs;
     const bank=window.FOOTBALL_QUESTIONS[kind];
     if(!questionDecks[kind].length){
-      questionDecks[kind]=bank.map((_,index)=>index);
-      for(let i=questionDecks[kind].length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[questionDecks[kind][i],questionDecks[kind][j]]=[questionDecks[kind][j],questionDecks[kind][i]];}
+      questionDecks[kind]=shuffledQuestionDeck(bank);
     }
     const question=bank[questionDecks[kind].pop()];
     const optionOrder=[0,1,2,3];
