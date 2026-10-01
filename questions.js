@@ -154,7 +154,6 @@ window.FOOTBALL_QUESTIONS = (() => {
     ['Sadio Mané’s fastest Premier League hat-trick, in minutes and seconds','萨迪奥·马内的英超最快帽子戏法用时','2:56','3:14','4:02','5:12'],
     ['Jamie Vardy’s consecutive scoring matches','杰米·瓦尔迪的连续进球场次','11','9','10','12'],
     ['Chelsea’s 2004/05 Premier League clean sheets','切尔西 2004/05 赛季英超零封场次','25','21','23','27'],
-    ['Liverpool’s 2018/19 points without winning the title','利物浦 2018/19 赛季未夺冠的积分','97','91','95','99'],
     ['Derby County’s 2007/08 league points','德比郡 2007/08 赛季英超积分','11','9','13','16'],
     ['Ryan Giggs’s Premier League winners’ medals','瑞恩·吉格斯的英超冠军奖牌数','13','11','12','14'],
     ['the most goals scored by one player in a Premier League match','英超单场个人最多进球数','5','4','6','7'],
@@ -169,7 +168,6 @@ window.FOOTBALL_QUESTIONS = (() => {
 
   const clubRecords = [
     ['Which club finished unbeaten in the 2003/04 Premier League?','哪支球队在 2003/04 赛季英超保持不败？','ars',['che','liv','mun']],
-    ['Which club earned 97 points in 2018/19 but did not win the title?','哪支球队在 2018/19 赛季拿到 97 分却没夺冠？','liv',['ars','che','mun']],
     ['Which club finished the 2007/08 Premier League with 11 points?','哪支球队在 2007/08 赛季英超只拿到 11 分？','derby',['sou','sun','lei']],
     ['Which club recorded 25 clean sheets in the 2004/05 Premier League?','哪支球队在 2004/05 赛季英超完成了 25 场零封？','che',['ars','liv','mun']],
     ['Which club scored seven goals in the 7–4 match against Reading in 2007?','哪支球队在 2007 年对雷丁的 7 比 4 比赛中打入七球？','por',['lei','new','tot']],
