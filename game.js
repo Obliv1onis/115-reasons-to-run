@@ -59,6 +59,7 @@
   let player, lion, uefa = null, parkedUefas = [], score = 0, eplScore = 0, uclScore = 0, budget = STARTING_BUDGET, lives = 1, lionFrozen = 0, uefaFrozen = 0, contactGrace = 0, prosecutionTime = 0, uefaTime = 0, bailoutCooldown = 0, endReason = 'caught', chunks = new Map(), runSeed = 1, visitedChunks = new Set();
   let keys = new Set(), touches = new Map(), jumpBuffer = 0, challenge = null, toastTime = 0;
   let questionDecks = {epl:[],ucl:[]};
+  let videoDeck=[];
   function shuffledQuestionDeck(bank){
     const groups=new Map();
     bank.forEach((question,index)=>{
@@ -200,6 +201,10 @@
     document.title=t('pageTitle');
     document.querySelectorAll('[data-i18n]').forEach(el=>el.innerHTML=t(el.dataset.i18n));
     $('langBtn').textContent=lang==='en'?'中文':'EN';
+    const videoLabel=lang==='en'?'Watch a random video criticizing Manchester City':'随机观看一段批评曼城的视频';
+    $('videoBtn').setAttribute('aria-label',videoLabel);
+    $('videoBtn').title=videoLabel;
+    $('videoBtn').textContent='↗';
     canvas.setAttribute('aria-label',lang==='en'?'Manchester City platform game':'曼城躲避英超平台游戏');
     updateFullscreenLabel();if(challenge)renderChallenge();if(state==='over')renderEndCopy();updateHud();
   }
@@ -517,6 +522,17 @@
   }
   $('startBtn').addEventListener('click',start);$('restartBtn').addEventListener('click',start);$('resumeBtn').addEventListener('click',resume);
   $('bailoutBtn').addEventListener('click',buyBailout);
+  $('videoBtn').addEventListener('click',()=>{
+    if(!videoDeck.length){
+      videoDeck=[...window.CITY_CRITICISM_VIDEOS];
+      for(let i=videoDeck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[videoDeck[i],videoDeck[j]]=[videoDeck[j],videoDeck[i]];}
+    }
+    const video=videoDeck.pop();
+    const url=new URL(`https://www.youtube.com/watch?v=${video.id}`);
+    if(video.start)url.searchParams.set('t',`${video.start}s`);
+    window.open(url.href,'_blank','noopener,noreferrer');
+    $('videoBtn').blur();
+  });
   $('langBtn').addEventListener('click',()=>{setLanguage(lang==='en'?'zh':'en');$('langBtn').blur();});
   window.addEventListener('keydown',event=>{
     const controls=['ArrowLeft','ArrowRight','ArrowUp','Space','KeyA','KeyD','KeyW','KeyP','Escape'];
