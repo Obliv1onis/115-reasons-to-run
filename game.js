@@ -50,8 +50,8 @@
     {key:'paris-saint-germain',en:'PARIS SAINT-GERMAIN',zh:'巴黎圣日耳曼'},
     {key:'real-madrid',en:'REAL MADRID',zh:'皇家马德里'}
   ];
-  const PLAYER_SPEED = 360, LION_SPEED = PLAYER_SPEED * 1.03;
-  const PLAYER_ACCEL = 1550, PLAYER_BRAKE = 2050, LION_ACCEL = 1750, LION_BRAKE = 2200;
+  const PLAYER_SPEED = 360, LION_SPEED = PLAYER_SPEED * .82;
+  const PLAYER_ACCEL = 1550, PLAYER_BRAKE = 2050, LION_ACCEL = 1050, LION_BRAKE = 1550;
   const STARTING_BUDGET = 900, RUN_COST_PER_METRE = .08, TROPHY_BONUS = {epl:150,ucl:500};
   const GRAVITY = 1900, JUMP_SPEED = 950, STEP = 1 / 120, CHUNK = 1800;
   let lang = 'en', state = 'ready', width = 1000, height = 700, scale = 1, viewWidth = 1000;
@@ -168,7 +168,8 @@
     for(let i=left;i<=right;i++) {const c=makeChunk(i); for(const key of Object.keys(result))result[key].push(...c[key]);}
     return result;
   }
-  function actor(x,size) {return {x,y:-size,w:size,h:size,vx:0,vy:0,onGround:true,coyote:.1,blocked:false,facing:1};}
+  const GROUND_SURFACE={ground:true,x:0,y:0,w:0,h:0};
+  function actor(x,size) {return {x,y:-size,w:size,h:size,vx:0,vy:0,onGround:true,coyote:.1,blocked:false,facing:1,navSurface:GROUND_SURFACE};}
   function clearInput(){keys.clear();touches.clear();jumpBuffer=0;}
   function reset() {
     runSeed=Math.floor(Math.random()*0xffffffff); chunks=new Map(); visitedChunks=new Set([0]); score=0; eplScore=0; uclScore=0; budget=STARTING_BUDGET; lives=1; lionFrozen=0; uefaFrozen=0; contactGrace=0; prosecutionTime=0; uefaTime=0; bailoutCooldown=0; uefa=null; parkedUefas=[]; endReason='caught';
@@ -300,16 +301,16 @@
     }
   }
   function jump(){if(state==='running')jumpBuffer=.14;}
-  function dropRoute(body,targetFeet,world){
+  function dropRoute(body,targetFeet,world,targetX=center(player),force=false){
     if(body.dropRoute){
       // Stay outside the ledge until the whole badge is below its former platform.
-      if(body.y>body.dropRoute.surfaceY+12||targetFeet<body.y+body.h+35)body.dropRoute=null;
+      if(body.y>body.dropRoute.surfaceY+12||(!body.dropRoute.force&&targetFeet<body.y+body.h+35))body.dropRoute=null;
       else return body.dropRoute;
     }
     const support=body.support;
     if(!body.onGround||!support||targetFeet<body.y+body.h+45)return null;
     const left=support.x-body.w/2-18,right=support.x+support.w+body.w/2+18;
-    const target=center(player),here=center(body);
+    const here=center(body);
     // A ground obstacle beside a ledge can make the nearest exit unreachable.
     const routeCost=edge=>{
       const corridorLeft=Math.min(here,edge)-body.w/2;
@@ -317,33 +318,103 @@
       const wallPenalty=world.obstacles.reduce((cost,wall)=>
         wall.x<corridorRight&&wall.x+wall.w>corridorLeft&&wall.y<support.y+body.h&&wall.y+wall.h>support.y+8
           ?cost+CHUNK:cost,0);
-      return Math.abs(here-edge)+.45*Math.abs(target-edge)+wallPenalty;
+      return Math.abs(here-edge)+.45*Math.abs(targetX-edge)+wallPenalty;
     };
     const leftCost=routeCost(left),rightCost=routeCost(right);
-    body.dropRoute={surfaceY:support.y,side:leftCost<=rightCost?-1:1};
+    body.dropRoute={surfaceY:support.y,side:leftCost<=rightCost?-1:1,force};
     return body.dropRoute;
+  }
+  function surfacePath(start,goal,body,world){
+    if(start===goal)return [start];
+    const nodes=[GROUND_SURFACE,...world.platforms,...world.obstacles];
+    if(!nodes.includes(start))nodes.push(start);
+    if(!nodes.includes(goal))nodes.push(goal);
+    const distance=new Map(nodes.map(node=>[node,Infinity])),previous=new Map(),open=new Set(nodes);
+    distance.set(start,0);
+    const gap=(a,b)=>Math.max(0,b.x-(a.x+a.w),a.x-(b.x+b.w));
+    const edgeCost=(a,b)=>{
+      if(a===b)return Infinity;
+      if(b===GROUND_SURFACE)return 210+Math.abs(center(a)-center(player))*.12;
+      const rise=(a===GROUND_SURFACE?0:a.y)-b.y;
+      const horizontal=a===GROUND_SURFACE?0:gap(a,b);
+      if(rise>190)return Infinity;
+      if(a!==GROUND_SURFACE&&b!==GROUND_SURFACE&&horizontal>310)return Infinity;
+      if(a!==GROUND_SURFACE&&b!==GROUND_SURFACE&&rise<0&&horizontal>330)return Infinity;
+      return 100+Math.abs(rise)*.65+horizontal+(a===GROUND_SURFACE?Math.abs(center(body)-center(b))*.22:0);
+    };
+    while(open.size){
+      let current=null,best=Infinity;
+      for(const node of open){const cost=distance.get(node);if(cost<best){best=cost;current=node;}}
+      if(!current||best===Infinity||current===goal)break;
+      open.delete(current);
+      for(const node of open){
+        const cost=edgeCost(current,node);if(!Number.isFinite(cost))continue;
+        const candidate=best+cost;
+        if(candidate<distance.get(node)){distance.set(node,candidate);previous.set(node,current);}
+      }
+    }
+    if(!previous.has(goal))return [];
+    const path=[goal];while(path[0]!==start){const node=previous.get(path[0]);if(!node)return [];path.unshift(node);}
+    return path;
+  }
+  function jumpRange(rise,speed){
+    const velocity=JUMP_SPEED*.93,discriminant=velocity*velocity-2*GRAVITY*Math.max(0,rise);
+    if(discriminant<0)return 0;
+    return speed*(velocity+Math.sqrt(discriminant))/GRAVITY;
   }
   function updateChaser(body,dt,world){
     const prosecuting=prosecutionTime>0;
     body.jumpCooldown=Math.max(0,(body.jumpCooldown||0)-dt);
-    const targetFeet=player.y+player.h;
-    const route=dropRoute(body,targetFeet,world);
-    const dx=center(player)-center(body);
-    const verticallySeparated=player.y+player.h<=body.y+10||body.y+body.h<=player.y+10;
-    const closeButOnAnotherLevel=Math.abs(dx)<(player.w+body.w)/2&&verticallySeparated;
-    const direction=route?route.side:closeButOnAnotherLevel?(Math.sign(player.vx)||Math.sign(dx)||body.facing):(Math.sign(dx)||body.facing);
-    const feet=body.y+body.h;
-    const wallRange=prosecuting?110:48;
-    const wallAhead=world.obstacles.some(w=>w.y<feet-1&&w.y+w.h>body.y&&(direction>0?w.x>=body.x+body.w-2&&w.x-(body.x+body.w)<wallRange:w.x+w.w<=body.x+2&&body.x-(w.x+w.w)<wallRange));
-    // Climb only when the target is above; a lower target takes the ledge route.
-    const modestClimb=targetFeet<feet-35&&targetFeet>=feet-195&&Math.abs(dx)<(prosecuting?260:210)&&world.platforms.some(p=>p.y<feet-30&&p.y>=feet-195&&p.x<body.x+body.w+100&&p.x+p.w>body.x-100);
-    if(body.onGround&&body.jumpCooldown===0&&(wallAhead||body.blocked||(!route&&modestClimb))){
-      body.vy=-JUMP_SPEED*.93;body.onGround=false;body.jumpCooldown=prosecuting?.45:.75;
+    const current=body.onGround?(body.support||GROUND_SURFACE):(body.navSurface||GROUND_SURFACE);
+    if(body.onGround)body.navSurface=current;
+    const target=player.onGround?(player.support||GROUND_SURFACE):(player.navSurface||GROUND_SURFACE);
+    body.navTime=(body.navTime||0)-dt;
+    if(body.navTime<=0||body.navFrom!==current||body.navGoal!==target){
+      body.navFrom=current;body.navGoal=target;body.navTime=.22;
+      const path=surfacePath(current,target,body,world);
+      body.navNext=path.length>1?path[1]:target;
     }
-    const multiplier=prosecuting?1.5:1;
+    const next=body.navNext||target;
+    const targetFeet=player.y+player.h;
+    const targetX=next===GROUND_SURFACE?center(player):center(next);
+    const route=next===GROUND_SURFACE&&current!==GROUND_SURFACE
+      ?dropRoute(body,1000,world,center(player),true)
+      :dropRoute(body,targetFeet,world,center(player));
+    const dx=center(player)-center(body);
+    const feet=body.y+body.h;
+    const wallRange=84;
+    let desiredX=targetX;
+    let needsJump=false;
+    if(next!==current&&next!==GROUND_SURFACE&&body.onGround){
+      const dir=Math.sign(center(next)-center(body))||body.facing;
+      const rise=(current===GROUND_SURFACE?0:current.y)-next.y;
+      const separation=current===GROUND_SURFACE?Math.abs(center(next)-center(body)):Math.max(0,dir>0?next.x-(current.x+current.w):current.x-(next.x+next.w));
+      needsJump=rise>12||separation>88;
+      if(needsJump){
+        const range=Math.max(80,jumpRange(rise,LION_SPEED*(prosecuting?1.35:1))-36);
+        if(current===GROUND_SURFACE)desiredX=center(next)-dir*Math.min(range*.72,Math.max(0,Math.abs(center(next)-center(body))-24));
+        else{
+          const launchMin=Math.max(current.x+body.w/2,next.x+body.w/2);
+          const launchMax=Math.min(current.x+current.w-body.w/2,next.x+next.w-body.w/2);
+          // If the platforms overlap, jump from their shared landing area instead of
+          // running to an arbitrary ledge and repeatedly reversing the approach.
+          desiredX=launchMin<=launchMax
+            ?clamp(center(body),launchMin,launchMax)
+            :dir>0?current.x+current.w-body.w/2-7:current.x+body.w/2+7;
+        }
+      }
+    }
+    const direction=route?route.side:(Math.sign(desiredX-center(body))||Math.sign(dx)||body.facing);
+    const wallAhead=world.obstacles.some(w=>w.y<feet-1&&w.y+w.h>body.y&&(direction>0?w.x>=body.x+body.w-2&&w.x-(body.x+body.w)<wallRange:w.x+w.w<=body.x+2&&body.x-(w.x+w.w)<wallRange));
+    body.stuckTime=body.onGround&&(body.blocked||Math.abs(body.vx)<18&&Math.abs(dx)>body.w*1.4)?(body.stuckTime||0)+dt:Math.max(0,(body.stuckTime||0)-dt*2);
+    const launchReached=Math.abs(center(body)-desiredX)<20||(direction>0&&center(body)>=desiredX-8)||(direction<0&&center(body)<=desiredX+8);
+    if(body.onGround&&body.jumpCooldown===0&&(wallAhead||body.blocked||body.stuckTime>.38||(needsJump&&launchReached))){
+      body.vy=-JUMP_SPEED*.93;body.onGround=false;body.jumpCooldown=prosecuting?.45:.75;
+      body.stuckTime=0;
+    }
+    const multiplier=prosecuting?1.35:1;
     const speed=LION_SPEED*multiplier;
-    // During a hearing, keep closing at full speed even inside the old slowdown radius.
-    const targetVx=route||prosecuting?direction*speed:clamp(dx*4,-speed,speed);
+    const targetVx=route||next!==current?direction*speed:clamp(dx*2.6,-speed,speed);
     moveActor(body,targetVx,dt,world,LION_ACCEL*multiplier,LION_BRAKE*multiplier);
   }
   function update(dt){
@@ -360,6 +431,7 @@
     jumpBuffer=Math.max(0,jumpBuffer-dt);
     const oldX=player.x;
     moveActor(player,direction*PLAYER_SPEED,dt,world,PLAYER_ACCEL,PLAYER_BRAKE);
+    if(player.onGround)player.navSurface=player.support||GROUND_SURFACE;
     budget=Math.max(0,budget-Math.abs(player.x-oldX)*RUN_COST_PER_METRE);
     contactGrace=Math.max(0,contactGrace-dt);
     if(lionFrozen>0){lionFrozen=Math.max(0,lionFrozen-dt);lion.vx=0;lion.vy=0;}
