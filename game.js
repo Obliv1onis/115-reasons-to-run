@@ -304,7 +304,8 @@
   function dropRoute(body,targetFeet,world,targetX=center(player),force=false){
     if(body.dropRoute){
       // Stay outside the ledge until the whole badge is below its former platform.
-      if(body.y>body.dropRoute.surfaceY+12||(!body.dropRoute.force&&targetFeet<body.y+body.h+35))body.dropRoute=null;
+      const landedElsewhere=body.onGround&&body.support!==body.dropRoute.surface;
+      if(landedElsewhere||body.y>body.dropRoute.surfaceY+12||(!body.dropRoute.force&&targetFeet<body.y+body.h+35))body.dropRoute=null;
       else return body.dropRoute;
     }
     const support=body.support;
@@ -321,7 +322,7 @@
       return Math.abs(here-edge)+.45*Math.abs(targetX-edge)+wallPenalty;
     };
     const leftCost=routeCost(left),rightCost=routeCost(right);
-    body.dropRoute={surfaceY:support.y,side:leftCost<=rightCost?-1:1,force};
+    body.dropRoute={surface:support,surfaceY:support.y,side:leftCost<=rightCost?-1:1,force};
     return body.dropRoute;
   }
   function surfacePath(start,goal,body,world){
