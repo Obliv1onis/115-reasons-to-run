@@ -1,0 +1,300 @@
+{
+  "spawn": {
+    "eplPerChunk": 1.5,
+    "prosecutionEplPerChunk": 0.7,
+    "uclChance": 0.25,
+    "prosecutionUclChance": 0,
+    "lawyerChance": 0.8,
+    "prosecutionLawyerChance": 1,
+    "eplChallengeChance": 0.28,
+    "mirrorChance": 0.5
+  },
+  "economy": {
+    "startingBudget": 900,
+    "startingLives": 1,
+    "runCostPerMetre": 0.08,
+    "trophyBonus": {
+      "epl": 150,
+      "ucl": 500
+    },
+    "lawyerCost": 100,
+    "lawyerLives": 1,
+    "freezeSeconds": 1.5,
+    "contactGraceSeconds": 2,
+    "bailoutAmount": 900,
+    "bailoutCooldown": 90
+  },
+  "prosecution": {
+    "eplThreshold": 15,
+    "uclThreshold": 3,
+    "seconds": 15,
+    "uefaSeconds": 15,
+    "bailoutSeconds": 30,
+    "speedMultiplier": 1.35
+  },
+  "physics": {
+    "playerSpeed": 360,
+    "chaserSpeedRatio": 0.82,
+    "playerAcceleration": 1550,
+    "playerBrake": 2050,
+    "chaserAcceleration": 1050,
+    "chaserBrake": 1550,
+    "gravity": 1900,
+    "jumpSpeed": 950,
+    "chaserJumpRatio": 0.93,
+    "step": 0.008333333333333333,
+    "coyoteSeconds": 0.1,
+    "jumpBufferSeconds": 0.14
+  },
+  "navigation": {
+    "refreshSeconds": 0.22,
+    "jumpCooldown": 0.75,
+    "prosecutionJumpCooldown": 0.45,
+    "wallLookAhead": 84,
+    "stuckSeconds": 0.38
+  },
+  "terrain": {
+    "chunkWidth": 1800,
+    "layouts": [
+      [
+        [
+          110,
+          140,
+          230
+        ],
+        [
+          370,
+          290,
+          230
+        ],
+        [
+          640,
+          450,
+          270
+        ],
+        [
+          970,
+          300,
+          230
+        ],
+        [
+          1250,
+          145,
+          230
+        ],
+        [
+          1500,
+          305,
+          230
+        ]
+      ],
+      [
+        [
+          150,
+          140,
+          260
+        ],
+        [
+          440,
+          285,
+          240
+        ],
+        [
+          175,
+          435,
+          240
+        ],
+        [
+          460,
+          585,
+          280
+        ],
+        [
+          810,
+          430,
+          270
+        ],
+        [
+          1130,
+          275,
+          240
+        ],
+        [
+          1440,
+          135,
+          250
+        ]
+      ],
+      [
+        [
+          80,
+          135,
+          260
+        ],
+        [
+          415,
+          145,
+          240
+        ],
+        [
+          730,
+          130,
+          280
+        ],
+        [
+          1090,
+          140,
+          260
+        ],
+        [
+          1450,
+          130,
+          240
+        ],
+        [
+          300,
+          295,
+          260
+        ],
+        [
+          650,
+          310,
+          240
+        ],
+        [
+          990,
+          300,
+          260
+        ],
+        [
+          690,
+          465,
+          250
+        ]
+      ],
+      [
+        [
+          95,
+          90,
+          230
+        ],
+        [
+          400,
+          180,
+          210
+        ],
+        [
+          690,
+          310,
+          280
+        ],
+        [
+          1040,
+          180,
+          230
+        ],
+        [
+          1350,
+          95,
+          290
+        ],
+        [
+          610,
+          465,
+          240
+        ],
+        [
+          965,
+          460,
+          260
+        ]
+      ],
+      [
+        [
+          130,
+          145,
+          300
+        ],
+        [
+          520,
+          290,
+          250
+        ],
+        [
+          835,
+          445,
+          300
+        ],
+        [
+          1210,
+          280,
+          230
+        ],
+        [
+          1500,
+          135,
+          250
+        ],
+        [
+          485,
+          455,
+          250
+        ]
+      ],
+      [
+        [
+          120,
+          100,
+          240
+        ],
+        [
+          460,
+          230,
+          260
+        ],
+        [
+          800,
+          380,
+          300
+        ],
+        [
+          1150,
+          215,
+          240
+        ],
+        [
+          1500,
+          90,
+          230
+        ],
+        [
+          850,
+          540,
+          220
+        ]
+      ]
+    ],
+    "startingLayout": [
+      [
+        620,
+        140,
+        250
+      ],
+      [
+        930,
+        295,
+        250
+      ],
+      [
+        1230,
+        450,
+        280
+      ],
+      [
+        1540,
+        155,
+        210
+      ]
+    ]
+  }
+}

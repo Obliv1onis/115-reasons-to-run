@@ -6,7 +6,7 @@ const { test } = require('node:test');
 // Exercise the game's actual physics and AI without starting the canvas UI.
 const source = fs.readFileSync(require.resolve('../game.js'), 'utf8');
 function simulation() {
-  const context = vm.createContext({});
+  const context = vm.createContext({CONFIG: JSON.parse(fs.readFileSync(require.resolve('../game-config.json'), 'utf8'))});
   vm.runInContext(`
     const PLAYER_SPEED=360,LION_SPEED=PLAYER_SPEED*.82;
     const LION_ACCEL=1050,LION_BRAKE=1550,GRAVITY=1900,JUMP_SPEED=950,CHUNK=1800;
@@ -14,7 +14,7 @@ function simulation() {
     ${source.slice(source.indexOf('  const clamp ='), source.indexOf('  function randomFor'))}
     ${source.slice(source.indexOf('  const GROUND_SURFACE='), source.indexOf('  function reset'))}
     ${source.slice(source.indexOf('  function moveActor('), source.indexOf('  function update(dt)'))}
-    globalThis.api={actor,dropRoute,updateChaser,setPlayer(value){player=value;}};
+    globalThis.api={actor,dropRoute,updateChaser,surfacePath,GROUND_SURFACE,setPlayer(value){player=value;}};
   `, context);
   return context.api;
 }
@@ -62,4 +62,31 @@ test('keeps the drop route in midair, clears it upon landing on a lower ledge', 
   const nextRoute = api.dropRoute(chaser, 1000, world, 450, true);
   assert.notEqual(nextRoute, route);
   assert.equal(nextRoute.surface, lower);
+});
+
+for (const name of ['League lion', 'UEFA']) {
+  test(`${name} climbs overlapping platforms and follows an airborne landing target`, () => {
+    const api = simulation();
+    const lower = {x:0,y:-140,w:260,h:24};
+    const upper = {x:190,y:-290,w:260,h:24};
+    const world = {obstacles:[],platforms:[lower,upper]};
+    const chaser = api.actor(60,74);
+    chaser.y=lower.y-chaser.h;chaser.support=lower;
+    const player=api.actor(340,64);
+    player.y=upper.y-player.h;player.support=upper;
+    api.setPlayer(player);
+    let reached=false;
+    for(let frame=0;frame<1800;frame++) {
+      api.updateChaser(chaser,1/120,world);
+      if(chaser.support===upper){reached=true;break;}
+    }
+    assert.ok(reached,'must land on the upper platform instead of repeatedly jumping below its edge');
+  });
+}
+
+test('rejects surfaces above the actual chaser jump apex', () => {
+  const api=simulation();
+  const high={x:0,y:-220,w:240,h:24};
+  const body=api.actor(50,74);api.setPlayer(api.actor(60,64));
+  assert.equal(api.surfacePath(api.GROUND_SURFACE,high,body,{obstacles:[],platforms:[high]}).length,0);
 });

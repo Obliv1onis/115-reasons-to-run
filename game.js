@@ -1,5 +1,8 @@
-(() => {
+(async () => {
   'use strict';
+  const response = await fetch('game-config.json', {cache:'no-store'});
+  if(!response.ok)throw new Error(`Cannot load game-config.json: ${response.status}`);
+  const CONFIG = await response.json();
   const $ = id => document.getElementById(id);
   const canvas = $('game');
   const ctx = canvas.getContext('2d');
@@ -13,27 +16,27 @@
       brand:'115 <strong>REASONS TO RUN</strong>', pageTitle:'115 Reasons to Run',
       tagline:'115 CHARGES. ONE MORE TROPHY?', budget:'BUDGET', lives:'LIVES', eplTrophies:'EPL', uclTrophies:'UCL', distance:'LEAGUE ON YOUR TAIL',
       controls:'← → / A D MOVE · SPACE / ↑ JUMP · P PAUSE', jump:'JUMP ↑', title:'115 REASONS<br><em>TO RUN.</em>',
-      intro:'115 charges. Start with 900 mil. Running burns cash. Premier League trophies pay 150 mil; a rare Champions League trophy pays 500 mil if you answer a rival’s football question. A lawyer costs 100 mil and buys an extra life. Every 15 league titles, the League finally opens the file for 15 seconds.',
+      intro:`1${CONFIG.prosecution.eplThreshold} charges. Start with ${CONFIG.economy.startingBudget} mil. Running burns cash. Premier League trophies pay ${CONFIG.economy.trophyBonus.epl} mil; a rare Champions League trophy pays ${CONFIG.economy.trophyBonus.ucl} mil if you answer a rival’s football question. A lawyer costs ${CONFIG.economy.lawyerCost} mil and buys an extra life. Every ${CONFIG.prosecution.eplThreshold} league titles, the League finally opens the file for ${CONFIG.prosecution.seconds} seconds.`,
       start:'START RUNNING →', instructions:'← → / A D to move · SPACE / ↑ to jump<br>On touchscreens, use the buttons below.',
-      fulltime:'THE LEAGUE WOULD LIKE A WORD', caught:'NO COMMENT.', final:'Trophies collected before questioning:', uefaKicker:'UEFA HAS ARRIVED WITH A CLIPBOARD', uefaCaught:'EUROPE<br>HAS QUESTIONS.', uefaFinal:'European paperwork caught up with you. Trophies collected:', restart:'FILE AN APPEAL ↻', brokeKicker:'BUDGET: ZERO', brokeTitle:'CHEATED.<br>STILL LOST.', brokeFinal:'Even cheating could not save the budget. Trophies collected:', brokeRestart:'FIND NEW INVESTORS ↻', pause:'HEARING ADJOURNED', breather:'CONSULT<br>THE LAWYERS.', resume:'BACK TO RUNNING →',
+      fulltime:'THE LEAGUE WOULD LIKE A WORD', caught:'NO COMMENT.', final:'Trophies collected before questioning:', uefaKicker:'UEFA HAS ARRIVED WITH A CLIPBOARD', uefaCaught:'EUROPE<br>HAS QUESTIONS.', uefaFinal:'European paperwork caught up with you. Trophies collected:`, restart:`FILE AN APPEAL ↻', brokeKicker:'BUDGET: ZERO', brokeTitle:'CHEATED.<br>STILL LOST.', brokeFinal:'Even cheating could not save the budget. Trophies collected:`, brokeRestart:`FIND NEW INVESTORS ↻', pause:'HEARING ADJOURNED', breather:'CONSULT<br>THE LAWYERS.', resume:'BACK TO RUNNING →',
       rival:'RIVAL OBJECTION', challengeNote:'The paperwork has four possible answers. Get one right to claim the trophy.',
-      collected:'+1 PREMIER LEAGUE TROPHY. +150 MIL.', hired:'LAWYER HIRED: -100 MIL, +1 LIFE.', saved:'LAWYER INTERVENES! PURSUER FROZEN FOR 1.5s.', frozen:'FROZEN', won:'OBJECTION OVERRULED. +1 TROPHY, +150 MIL!', wonUcl:'CHAMPIONS LEAGUE TROPHY WON! +500 MIL!', wonUclUefa:'+500 MIL. UEFA HAS FOUND YOUR ADDRESS AT LAST.',
+      collected:`+1 PREMIER LEAGUE TROPHY. +${CONFIG.economy.trophyBonus.epl} MIL.`, hired:`LAWYER HIRED: -${CONFIG.economy.lawyerCost} MIL, +${CONFIG.economy.lawyerLives} LIFE.`, saved:`LAWYER INTERVENES! PURSUER FROZEN FOR ${CONFIG.economy.freezeSeconds}s.`, frozen:'FROZEN', won:`OBJECTION OVERRULED. +1 TROPHY, +${CONFIG.economy.trophyBonus.epl} MIL!`, wonUcl:`CHAMPIONS LEAGUE TROPHY WON! +${CONFIG.economy.trophyBonus.ucl} MIL!`, wonUclUefa:`+${CONFIG.economy.trophyBonus.ucl} MIL. UEFA HAS FOUND YOUR ADDRESS AT LAST.`,
       challengeTitle:name=>`${name} WANTS THIS PREMIER LEAGUE TROPHY`, uclChallengeTitle:name=>`${name} WANTS THE CHAMPIONS LEAGUE TROPHY`,
       quizPrompt:'Answer correctly to keep this trophy out of the evidence room.', quizWrong:answer=>`WRONG. THE FILE SAYS: ${answer}.`, source:'CHECK THE RECORD ↗', next:'CONTINUE →',
-      startToast:'115 reasons to keep moving.', prosecutionLabel:'PROSECUTION MODE', prosecutionStart:'15 titles? The League has finally found its reading glasses.', prosecutionEnd:'Hearing adjourned. The trophy cabinet remains under observation.', uefaStart:'Three European titles? UEFA has suddenly remembered your address.', uefaEnd:'UEFA has stopped to file paperwork. For now.', bailoutButton:'TAKE 900 MIL', bailoutReady:'INVITE A 30s HEARING', bailoutCooling:seconds=>`COUNSEL RETURNS IN ${seconds}s`, bailoutToast:'900 mil secured. The League calls it evidence; your accountant calls it Tuesday.', fullscreen:'Fullscreen', exitFullscreen:'Exit fullscreen', fullscreenError:'Fullscreen is unavailable. The game still fills this window.'
+      startToast:'115 reasons to keep moving.', prosecutionLabel:'PROSECUTION MODE', prosecutionStart:`${CONFIG.prosecution.eplThreshold} titles? The League has finally found its reading glasses.`, prosecutionEnd:'Hearing adjourned. The trophy cabinet remains under observation.', uefaStart:'Three European titles? UEFA has suddenly remembered your address.', uefaEnd:'UEFA has stopped to file paperwork. For now.', bailoutButton:`TAKE ${CONFIG.economy.bailoutAmount} MIL`, bailoutReady:`INVITE A ${CONFIG.prosecution.bailoutSeconds}s HEARING`, bailoutCooling:seconds=>`COUNSEL RETURNS IN ${seconds}s`, bailoutToast:`${CONFIG.economy.bailoutAmount} mil secured. The League calls it evidence; your accountant calls it Tuesday.`, fullscreen:'Fullscreen', exitFullscreen:'Exit fullscreen', fullscreenError:'Fullscreen is unavailable. The game still fills this window.'
     },
     zh: {
       brand:'115 <strong>先跑再说</strong>', pageTitle:'115：先跑再说',
       tagline:'115 项指控，再拿一座？', budget:'资金', lives:'生命', eplTrophies:'英超', uclTrophies:'欧冠', distance:'英超追到哪了',
       controls:'← → / A D 移动 · 空格 / ↑ 跳跃 · P 暂停', jump:'跳跃 ↑', title:'115。<br><em>先跑再说。</em>',
-      intro:'115 项指控，先拿 900 mil 启动资金。跑动花钱；英超奖杯补回 150 mil，稀有的欧冠奖杯答对对手的足球知识题后可得 500 mil。律师花费 100 mil、增加一条命。每拿 15 座英超冠军，英超总算会翻开案卷调查 15 秒。',
+      intro:`1${CONFIG.prosecution.eplThreshold} 项指控，先拿 ${CONFIG.economy.startingBudget} mil 启动资金。跑动花钱；英超奖杯补回 ${CONFIG.economy.trophyBonus.epl} mil，稀有的欧冠奖杯答对对手的足球知识题后可得 ${CONFIG.economy.trophyBonus.ucl} mil。律师花费 ${CONFIG.economy.lawyerCost} mil、增加一条命。每拿 ${CONFIG.prosecution.eplThreshold} 座英超冠军，英超总算会翻开案卷调查 ${CONFIG.prosecution.seconds} 秒。`,
       start:'先跑为敬 →', instructions:'← → / A D 移动 · 空格 / ↑ 跳跃<br>触屏设备可使用下方按钮。',
       fulltime:'英超请你配合调查', caught:'无可奉告。', final:'被叫去问话前收集的奖杯：', uefaKicker:'欧足联带着卷宗来了', uefaCaught:'欧洲赛场<br>也要问话。', uefaFinal:'欧洲的文件终于追上你了。收集到的奖杯：', restart:'提起上诉 ↻', brokeKicker:'资金归零', brokeTitle:'作弊了，<br>还是输了。', brokeFinal:'作弊也救不了预算。收集到的奖杯：', brokeRestart:'再找投资人 ↻', pause:'暂时休庭', breather:'先和律师<br>商量一下。', resume:'继续跑路 →',
       rival:'对手提出异议', challengeNote:'卷宗里有四个选项。答对了才能拿走奖杯。',
-      collected:'+1 座英超奖杯，资金 +150 mil。', hired:'请到律师：资金 -100 mil，生命 +1。', saved:'律师出手！追兵原地停 1.5 秒。', frozen:'静止中', won:'异议驳回，英超奖杯 +1，资金 +150 mil！', wonUcl:'欧冠奖杯到手！资金 +500 mil！', wonUclUefa:'资金 +500 mil。欧足联终于查到你家地址了。',
+      collected:`+1 座英超奖杯，资金 +${CONFIG.economy.trophyBonus.epl} mil。`, hired:`请到律师：资金 -${CONFIG.economy.lawyerCost} mil，生命 +1。`, saved:`律师出手！追兵原地停 ${CONFIG.economy.freezeSeconds} 秒。`, frozen:'静止中', won:`异议驳回，英超奖杯 +1，资金 +${CONFIG.economy.trophyBonus.epl} mil！`, wonUcl:`欧冠奖杯到手！资金 +${CONFIG.economy.trophyBonus.ucl} mil！`, wonUclUefa:`资金 +${CONFIG.economy.trophyBonus.ucl} mil。欧足联终于查到你家地址了。`,
       challengeTitle:name=>`${name}要抢这座英超奖杯`, uclChallengeTitle:name=>`${name}要抢这座欧冠奖杯`,
       quizPrompt:'答对了，才能让这座奖杯不进证物室。', quizWrong:answer=>`答错了。卷宗上的答案是：${answer}。`, source:'查看原始记录 ↗', next:'继续 →',
-      startToast:'不停下来的理由，足足有 115 个。', prosecutionLabel:'起诉模式', prosecutionStart:'又攒够 15 座？英超终于想起翻案卷了。', prosecutionEnd:'暂时休庭。奖杯柜继续接受监督。', uefaStart:'欧冠攒够三座？欧足联突然想起你家地址了。', uefaEnd:'欧足联停下来整理案卷。暂时的。', bailoutButton:'领取 900 mil', bailoutReady:'附赠 30 秒调查', bailoutCooling:seconds=>`律师 ${seconds} 秒后回来`, bailoutToast:'900 mil 到账。英超说是证据，会计说是周二。', fullscreen:'全屏', exitFullscreen:'退出全屏', fullscreenError:'当前无法进入全屏，游戏仍会铺满窗口。'
+      startToast:'不停下来的理由，足足有 115 个。', prosecutionLabel:'起诉模式', prosecutionStart:`又攒够 ${CONFIG.prosecution.eplThreshold} 座？英超终于想起翻案卷了。`, prosecutionEnd:'暂时休庭。奖杯柜继续接受监督。', uefaStart:'欧冠攒够三座？欧足联突然想起你家地址了。', uefaEnd:'欧足联停下来整理案卷。暂时的。', bailoutButton:`领取 ${CONFIG.economy.bailoutAmount} mil`, bailoutReady:`附赠 ${CONFIG.prosecution.bailoutSeconds} 秒调查`, bailoutCooling:seconds=>`律师 ${seconds} 秒后回来`, bailoutToast:`${CONFIG.economy.bailoutAmount} mil 到账。英超说是证据，会计说是周二。`, fullscreen:'全屏', exitFullscreen:'退出全屏', fullscreenError:'当前无法进入全屏，游戏仍会铺满窗口。'
     }
   };
   const eplClubs = [
@@ -50,13 +53,14 @@
     {key:'paris-saint-germain',en:'PARIS SAINT-GERMAIN',zh:'巴黎圣日耳曼'},
     {key:'real-madrid',en:'REAL MADRID',zh:'皇家马德里'}
   ];
-  const PLAYER_SPEED = 360, LION_SPEED = PLAYER_SPEED * .82;
-  const PLAYER_ACCEL = 1550, PLAYER_BRAKE = 2050, LION_ACCEL = 1050, LION_BRAKE = 1550;
-  const STARTING_BUDGET = 900, RUN_COST_PER_METRE = .08, TROPHY_BONUS = {epl:150,ucl:500};
-  const GRAVITY = 1900, JUMP_SPEED = 950, STEP = 1 / 120, CHUNK = 1800;
+  const PLAYER_SPEED = CONFIG.physics.playerSpeed, LION_SPEED = PLAYER_SPEED * CONFIG.physics.chaserSpeedRatio;
+  const PLAYER_ACCEL = CONFIG.physics.playerAcceleration, PLAYER_BRAKE = CONFIG.physics.playerBrake;
+  const LION_ACCEL = CONFIG.physics.chaserAcceleration, LION_BRAKE = CONFIG.physics.chaserBrake;
+  const STARTING_BUDGET = CONFIG.economy.startingBudget, RUN_COST_PER_METRE = CONFIG.economy.runCostPerMetre, TROPHY_BONUS = CONFIG.economy.trophyBonus;
+  const GRAVITY = CONFIG.physics.gravity, JUMP_SPEED = CONFIG.physics.jumpSpeed, STEP = CONFIG.physics.step, CHUNK = CONFIG.terrain.chunkWidth;
   let lang = 'en', state = 'ready', width = 1000, height = 700, scale = 1, viewWidth = 1000;
   let cameraX = 0, groundScreen = 550, baseGround = 550, last = 0, accumulator = 0, time = 0;
-  let player, lion, uefa = null, parkedUefas = [], score = 0, eplScore = 0, uclScore = 0, budget = STARTING_BUDGET, lives = 1, lionFrozen = 0, uefaFrozen = 0, contactGrace = 0, prosecutionTime = 0, uefaTime = 0, bailoutCooldown = 0, endReason = 'caught', chunks = new Map(), runSeed = 1, visitedChunks = new Set();
+  let player, lion, uefa = null, parkedUefas = [], score = 0, eplScore = 0, uclScore = 0, budget = STARTING_BUDGET, lives = CONFIG.economy.startingLives, lionFrozen = 0, uefaFrozen = 0, contactGrace = 0, prosecutionTime = 0, uefaTime = 0, bailoutCooldown = 0, endReason = 'caught', chunks = new Map(), runSeed = 1, visitedChunks = new Set();
   let keys = new Set(), touches = new Map(), jumpBuffer = 0, challenge = null, toastTime = 0;
   let questionDecks = {epl:[],ucl:[]};
   let videoDeck=[];
@@ -98,21 +102,14 @@
     const addTrophy = (x,surface) => chunk.trophies.push({kind:'epl',x,y:surface-68,w:44,h:60,taken:false});
     // Each motif has a different silhouette and several reachable routes.
     // Tuple: horizontal position, elevation, width. Adjacent rises stay below 200.
-    const layouts = [
-      [[110,140,230],[370,290,230],[640,450,270],[970,300,230],[1250,145,230],[1500,305,230]],
-      [[150,140,260],[440,285,240],[175,435,240],[460,585,280],[810,430,270],[1130,275,240],[1440,135,250]],
-      [[80,135,260],[415,145,240],[730,130,280],[1090,140,260],[1450,130,240],[300,295,260],[650,310,240],[990,300,260],[690,465,250]],
-      [[95,90,230],[400,180,210],[690,310,280],[1040,180,230],[1350,95,290],[610,465,240],[965,460,260]],
-      [[130,145,300],[520,290,250],[835,445,300],[1210,280,230],[1500,135,250],[485,455,250]],
-      [[120,100,240],[460,230,260],[800,380,300],[1150,215,240],[1500,90,230],[850,540,220]]
-    ];
+    const layouts = CONFIG.terrain.layouts;
     let motif=Math.floor(random()*layouts.length);
     const previous=Math.floor(randomFor(index-1)()*layouts.length);
     if(motif===previous)motif=(motif+1)%layouts.length;
     chunk.motif=motif;
-    const mirrored=index!==0&&random()<.5;
+    const mirrored=index!==0&&random()<CONFIG.spawn.mirrorChance;
     let layout=layouts[motif];
-    if(index===0)layout=[[620,140,250],[930,295,250],[1230,450,280],[1540,155,210]];
+    if(index===0)layout=CONFIG.terrain.startingLayout;
     for(const [position,elevation,span] of layout){
       const w=span+Math.floor(random()*21),x=origin+(mirrored?CHUNK-position-w:position);
       const y=-(elevation+Math.floor(random()*11));
@@ -137,19 +134,19 @@
       if(!chunk.obstacles.some(o=>x+44>o.x-30&&x<o.x+o.w+30))sites.push({x,surface:0});
     }
     for(let i=sites.length-1;i>0;i--){const j=Math.floor(rewardRandom()*(i+1));[sites[i],sites[j]]=[sites[j],sites[i]];}
-    const eplRate=prosecutionTime>0?.7:1.5;
+    const eplRate=prosecutionTime>0?CONFIG.spawn.prosecutionEplPerChunk:CONFIG.spawn.eplPerChunk;
     const eplCount=Math.floor(eplRate)+(rewardRandom()<eplRate%1?1:0);
     for(const site of sites.slice(0,eplCount))addTrophy(site.x,site.surface);
-    // At most one Champions League trophy per chunk, at a 15% chance outside prosecution.
-    if(prosecutionTime<=0&&rewardRandom()<.15){
+    // At most one Champions League trophy per chunk, using the configured probability.
+    if(rewardRandom()<(prosecutionTime>0?CONFIG.spawn.prosecutionUclChance:CONFIG.spawn.uclChance)){
       const lowPlatforms=chunk.platforms.filter(platform=>-platform.y<=310);
       const emptyPlatforms=lowPlatforms.filter(platform=>!chunk.trophies.some(item=>item.y===platform.y-68&&item.x>=platform.x&&item.x<platform.x+platform.w));
       const choices=emptyPlatforms.length?emptyPlatforms:lowPlatforms;
       const platform=choices[Math.floor(rewardRandom()*choices.length)];
       chunk.trophies.push({kind:'ucl',x:platform.x+platform.w/2-27,y:platform.y-96,w:54,h:88,taken:false});
     }
-    // One lawyer per prosecution chunk; 80% chance otherwise.
-    if(prosecutionTime>0||rewardRandom()<.8){
+    // Lawyer appearance rates are independently configurable for each mode.
+    if(rewardRandom()<(prosecutionTime>0?CONFIG.spawn.prosecutionLawyerChance:CONFIG.spawn.lawyerChance)){
       const start=index===0?520:100,range=CHUNK-start-100;
       const offset=Math.floor(random()*range);
       for(let step=0;step<range;step+=46){
@@ -162,17 +159,17 @@
     chunks.set(index,chunk); return chunk;
   }
   function terrain() {
-    const left=Math.floor((Math.min(player.x,lion.x,cameraX)-CHUNK)/CHUNK);
-    const right=Math.floor((Math.max(player.x,lion.x,cameraX+viewWidth)+CHUNK)/CHUNK);
+    const left=Math.floor((Math.min(player.x,lion.x,uefa?uefa.x:player.x,cameraX)-CHUNK)/CHUNK);
+    const right=Math.floor((Math.max(player.x,lion.x,uefa?uefa.x:player.x,cameraX+viewWidth)+CHUNK)/CHUNK);
     const result={obstacles:[],platforms:[],trophies:[],lawyers:[]};
     for(let i=left;i<=right;i++) {const c=makeChunk(i); for(const key of Object.keys(result))result[key].push(...c[key]);}
     return result;
   }
   const GROUND_SURFACE={ground:true,x:0,y:0,w:0,h:0};
-  function actor(x,size) {return {x,y:-size,w:size,h:size,vx:0,vy:0,onGround:true,coyote:.1,blocked:false,facing:1,navSurface:GROUND_SURFACE};}
+  function actor(x,size) {return {x,y:-size,w:size,h:size,vx:0,vy:0,onGround:true,coyote:CONFIG.physics.coyoteSeconds,blocked:false,facing:1,navSurface:GROUND_SURFACE};}
   function clearInput(){keys.clear();touches.clear();jumpBuffer=0;}
   function reset() {
-    runSeed=Math.floor(Math.random()*0xffffffff); chunks=new Map(); visitedChunks=new Set([0]); score=0; eplScore=0; uclScore=0; budget=STARTING_BUDGET; lives=1; lionFrozen=0; uefaFrozen=0; contactGrace=0; prosecutionTime=0; uefaTime=0; bailoutCooldown=0; uefa=null; parkedUefas=[]; endReason='caught';
+    runSeed=Math.floor(Math.random()*0xffffffff); chunks=new Map(); visitedChunks=new Set([0]); score=0; eplScore=0; uclScore=0; budget=STARTING_BUDGET; lives=CONFIG.economy.startingLives; lionFrozen=0; uefaFrozen=0; contactGrace=0; prosecutionTime=0; uefaTime=0; bailoutCooldown=0; uefa=null; parkedUefas=[]; endReason='caught';
     player=actor(300,64); lion=actor(15,74); challenge=null; questionDecks={epl:[],ucl:[]}; clearInput();
     groundScreen=baseGround;
     cameraX=center(player)-viewWidth*.5; time=0; accumulator=0; terrain(); updateHud();
@@ -257,25 +254,25 @@
   function callUefa(){
     if(uefa)parkedUefas.push(uefa);
     uefa=actor(cameraX-82,74);
-    uefaTime=15;
+    uefaTime=CONFIG.prosecution.uefaSeconds;
     uefaFrozen=0;
-    startProsecution(15,'uefaStart');
+    startProsecution(CONFIG.prosecution.uefaSeconds,'uefaStart');
   }
   function buyBailout(){
     if(state!=='running'||bailoutCooldown>0)return;
-    budget+=900;
-    bailoutCooldown=90;
-    startProsecution(30,'bailoutToast');
+    budget+=CONFIG.economy.bailoutAmount;
+    bailoutCooldown=CONFIG.economy.bailoutCooldown;
+    startProsecution(CONFIG.prosecution.bailoutSeconds,'bailoutToast');
   }
   function award(kind='epl'){
     score++;
     if(kind==='ucl'){
       uclScore++;
-      if(uclScore%3===0)callUefa();
+      if(uclScore%CONFIG.prosecution.uclThreshold===0)callUefa();
     }
     else{
       eplScore++;
-      if(eplScore%15===0)startProsecution(15,'prosecutionStart');
+      if(eplScore%CONFIG.prosecution.eplThreshold===0)startProsecution(CONFIG.prosecution.seconds,'prosecutionStart');
     }
     budget+=TROPHY_BONUS[kind];updateHud();
   }
@@ -284,7 +281,7 @@
   function moveActor(body,targetVx,dt,world,accel,brake){
     const turning=body.vx&&Math.sign(body.vx)!==Math.sign(targetVx);
     body.vx=approach(body.vx,targetVx,(targetVx===0||turning?brake:accel)*dt);
-    body.blocked=false;body.coyote=body.onGround?.10:Math.max(0,body.coyote-dt);
+    body.blocked=false;body.coyote=body.onGround?CONFIG.physics.coyoteSeconds:Math.max(0,body.coyote-dt);
     if(body.vx)body.facing=Math.sign(body.vx);
     body.x+=body.vx*dt;
     for(const wall of world.obstacles)if(overlap(body,wall)){
@@ -300,7 +297,7 @@
       if(body.y+body.h>=landing){body.y=landing-body.h;body.vy=0;body.onGround=true;}
     }
   }
-  function jump(){if(state==='running')jumpBuffer=.14;}
+  function jump(){if(state==='running')jumpBuffer=CONFIG.physics.jumpBufferSeconds;}
   function dropRoute(body,targetFeet,world,targetX=center(player),force=false){
     if(body.dropRoute){
       // Stay outside the ledge until the whole badge is below its former platform.
@@ -338,9 +335,8 @@
       if(b===GROUND_SURFACE)return 210+Math.abs(center(a)-center(player))*.12;
       const rise=(a===GROUND_SURFACE?0:a.y)-b.y;
       const horizontal=a===GROUND_SURFACE?0:gap(a,b);
-      if(rise>190)return Infinity;
-      if(a!==GROUND_SURFACE&&b!==GROUND_SURFACE&&horizontal>310)return Infinity;
-      if(a!==GROUND_SURFACE&&b!==GROUND_SURFACE&&rise<0&&horizontal>330)return Infinity;
+      if(jumpRange(rise,LION_SPEED*(prosecutionTime>0?CONFIG.prosecution.speedMultiplier:1))===0)return Infinity;
+      if(a!==GROUND_SURFACE&&horizontal>jumpRange(rise,LION_SPEED*(prosecutionTime>0?CONFIG.prosecution.speedMultiplier:1))-body.w/2)return Infinity;
       return 100+Math.abs(rise)*.65+horizontal+(a===GROUND_SURFACE?Math.abs(center(body)-center(b))*.22:0);
     };
     while(open.size){
@@ -359,7 +355,7 @@
     return path;
   }
   function jumpRange(rise,speed){
-    const velocity=JUMP_SPEED*.93,discriminant=velocity*velocity-2*GRAVITY*Math.max(0,rise);
+    const velocity=JUMP_SPEED*CONFIG.physics.chaserJumpRatio,discriminant=velocity*velocity-2*GRAVITY*rise;
     if(discriminant<0)return 0;
     return speed*(velocity+Math.sqrt(discriminant))/GRAVITY;
   }
@@ -371,19 +367,20 @@
     const target=player.onGround?(player.support||GROUND_SURFACE):(player.navSurface||GROUND_SURFACE);
     body.navTime=(body.navTime||0)-dt;
     if(body.navTime<=0||body.navFrom!==current||body.navGoal!==target){
-      body.navFrom=current;body.navGoal=target;body.navTime=.22;
+      body.navFrom=current;body.navGoal=target;body.navTime=CONFIG.navigation.refreshSeconds;
       const path=surfacePath(current,target,body,world);
       body.navNext=path.length>1?path[1]:target;
     }
-    const next=body.navNext||target;
+    const next=(!body.onGround&&body.airTarget)||body.navNext||target;
+    if(body.onGround)body.airTarget=null;
     const targetFeet=player.y+player.h;
     const targetX=next===GROUND_SURFACE?center(player):center(next);
     const route=next===GROUND_SURFACE&&current!==GROUND_SURFACE
       ?dropRoute(body,1000,world,center(player),true)
-      :dropRoute(body,targetFeet,world,center(player));
+      :next===current?dropRoute(body,targetFeet,world,center(player)):null;
     const dx=center(player)-center(body);
     const feet=body.y+body.h;
-    const wallRange=84;
+    const wallRange=CONFIG.navigation.wallLookAhead;
     let desiredX=targetX;
     let needsJump=false;
     if(next!==current&&next!==GROUND_SURFACE&&body.onGround){
@@ -392,7 +389,7 @@
       const separation=current===GROUND_SURFACE?Math.abs(center(next)-center(body)):Math.max(0,dir>0?next.x-(current.x+current.w):current.x-(next.x+next.w));
       needsJump=rise>12||separation>88;
       if(needsJump){
-        const range=Math.max(80,jumpRange(rise,LION_SPEED*(prosecuting?1.35:1))-36);
+        const range=Math.max(80,jumpRange(rise,LION_SPEED*(prosecuting?CONFIG.prosecution.speedMultiplier:1))-36);
         if(current===GROUND_SURFACE)desiredX=center(next)-dir*Math.min(range*.72,Math.max(0,Math.abs(center(next)-center(body))-24));
         else{
           const launchMin=Math.max(current.x+body.w/2,next.x+body.w/2);
@@ -409,11 +406,12 @@
     const wallAhead=world.obstacles.some(w=>w.y<feet-1&&w.y+w.h>body.y&&(direction>0?w.x>=body.x+body.w-2&&w.x-(body.x+body.w)<wallRange:w.x+w.w<=body.x+2&&body.x-(w.x+w.w)<wallRange));
     body.stuckTime=body.onGround&&(body.blocked||Math.abs(body.vx)<18&&Math.abs(dx)>body.w*1.4)?(body.stuckTime||0)+dt:Math.max(0,(body.stuckTime||0)-dt*2);
     const launchReached=Math.abs(center(body)-desiredX)<20||(direction>0&&center(body)>=desiredX-8)||(direction<0&&center(body)<=desiredX+8);
-    if(body.onGround&&body.jumpCooldown===0&&(wallAhead||body.blocked||body.stuckTime>.38||(needsJump&&launchReached))){
-      body.vy=-JUMP_SPEED*.93;body.onGround=false;body.jumpCooldown=prosecuting?.45:.75;
+    if(body.onGround&&body.jumpCooldown===0&&(wallAhead||body.blocked||body.stuckTime>CONFIG.navigation.stuckSeconds||(needsJump&&launchReached))){
+      body.airTarget=next;
+      body.vy=-JUMP_SPEED*CONFIG.physics.chaserJumpRatio;body.onGround=false;body.jumpCooldown=prosecuting?CONFIG.navigation.prosecutionJumpCooldown:CONFIG.navigation.jumpCooldown;
       body.stuckTime=0;
     }
-    const multiplier=prosecuting?1.35:1;
+    const multiplier=prosecuting?CONFIG.prosecution.speedMultiplier:1;
     const speed=LION_SPEED*multiplier;
     const targetVx=route||next!==current?direction*speed:clamp(dx*2.6,-speed,speed);
     moveActor(body,targetVx,dt,world,LION_ACCEL*multiplier,LION_BRAKE*multiplier);
@@ -445,18 +443,18 @@
     followCamera(dt);
     for(const lawyer of world.lawyers){
       if(lawyer.taken||!overlap(player,lawyer,6))continue;
-      lawyer.taken=true;budget-=100;lives++;toast('hired');
+      lawyer.taken=true;budget-=CONFIG.economy.lawyerCost;lives+=CONFIG.economy.lawyerLives;toast('hired');
     }
     const captor=contactGrace===0?([lion,uefa].find(body=>body&&overlap(player,body,10))):null;
     if(captor){
-      if(lives>1){lives--;if(captor===lion)lionFrozen=1.5;else uefaFrozen=1.5;contactGrace=2;captor.vx=0;captor.vy=0;toast('saved');}
+      if(lives>1){lives--;if(captor===lion)lionFrozen=CONFIG.economy.freezeSeconds;else uefaFrozen=CONFIG.economy.freezeSeconds;contactGrace=CONFIG.economy.contactGraceSeconds;captor.vx=0;captor.vy=0;toast('saved');}
       else{gameOver(captor===uefa?'uefa':'caught');return;}
     }
     for(const trophy of world.trophies){
       if(trophy.taken||(prosecutionTime>0&&trophy.kind==='ucl')||!overlap(player,trophy,3))continue;
       trophy.taken=true;
-      if(trophy.kind==='ucl'||Math.random()<.28){startChallenge(trophy.kind);break;}
-      award('epl');if(prosecutionTime<=0||eplScore%15!==0)toast('collected');
+      if(trophy.kind==='ucl'||Math.random()<CONFIG.spawn.eplChallengeChance){startChallenge(trophy.kind);break;}
+      award('epl');if(prosecutionTime<=0||eplScore%CONFIG.prosecution.eplThreshold!==0)toast('collected');
     }
     if(state==='challenge'){updateHud();return;}
     if(budget<=0){gameOver('funds');return;}
@@ -480,7 +478,7 @@
     const c=challenge;if(!c)return;
     $('rivalLogo').src=`logos/${c.club.key}.png`;$('rivalLogo').alt=c.club[lang];
     $('challengeTitle').textContent=words[lang][c.kind==='ucl'?'uclChallengeTitle':'challengeTitle'](c.club[lang]);
-    $('challengeCopy').textContent=c.result==='lost'?t('quizWrong')(c.question.options[c.question.answer][lang]):c.result==='won'?t(c.kind==='ucl'?(uclScore%3===0?'wonUclUefa':'wonUcl'):'won'):t('quizPrompt');
+    $('challengeCopy').textContent=c.result==='lost'?t('quizWrong')(c.question.options[c.question.answer][lang]):c.result==='won'?t(c.kind==='ucl'?(uclScore%CONFIG.prosecution.uclThreshold===0?'wonUclUefa':'wonUcl'):'won'):t('quizPrompt');
     $('quizQuestion').textContent=c.question.prompt[lang];
     $('questionSource').href=c.question.source;
     $('questionSource').textContent=t('source');
@@ -632,4 +630,10 @@
   document.addEventListener('fullscreenchange',updateFullscreenLabel);
   new ResizeObserver(resize).observe(canvas);
   resize();reset();setLanguage('en');requestAnimationFrame(frame);
-})();
+})().catch(error => {
+  console.error(error);
+  const copy=document.querySelector('#startOverlay .description');
+  if(copy)copy.textContent='无法加载游戏配置，请刷新重试。 / Unable to load game configuration. Please refresh.';
+  const start=document.getElementById('startBtn');
+  if(start)start.disabled=true;
+});
