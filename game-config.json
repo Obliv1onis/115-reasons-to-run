@@ -2,7 +2,7 @@
   "spawn": {
     "eplPerChunk": 1.5,
     "prosecutionEplPerChunk": 0.7,
-    "uclChance": 0.5,
+    "uclChance": 0.35,
     "prosecutionUclChance": 0,
     "lawyerChance": 0.8,
     "prosecutionLawyerChance": 1,
@@ -27,10 +27,10 @@
   "prosecution": {
     "eplThreshold": 15,
     "uclThreshold": 3,
-    "seconds": 15,
-    "uefaSeconds": 15,
+    "seconds": 20,
+    "uefaSeconds": 20,
     "bailoutSeconds": 30,
-    "speedMultiplier": 1.35
+    "speedMultiplier": 1.4
   },
   "physics": {
     "playerSpeed": 360,
