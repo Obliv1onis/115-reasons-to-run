@@ -2,7 +2,7 @@
   "spawn": {
     "eplPerChunk": 1.5,
     "prosecutionEplPerChunk": 0.7,
-    "uclChance": 0.25,
+    "uclChance": 0.5,
     "prosecutionUclChance": 0,
     "lawyerChance": 0.8,
     "prosecutionLawyerChance": 1,
